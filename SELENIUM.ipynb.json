@@ -1,0 +1,624 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "## all imports\n",
+    "from IPython.display import HTML\n",
+    "import numpy as np\n",
+    "import urllib.request\n",
+    "import urllib.parse\n",
+    "from bs4 import BeautifulSoup #this is beautiful soup\n",
+    "\n",
+    "from pandas import Series\n",
+    "import pandas as pd\n",
+    "from pandas import DataFrame\n",
+    "\n",
+    "import matplotlib\n",
+    "import matplotlib.pyplot as plt\n",
+    "%matplotlib inline\n",
+    "\n",
+    "import seaborn as sns\n",
+    "sns.set_context(\"talk\")\n",
+    "sns.set_style(\"white\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "b'<!DOCTYPE html>\\n\\n<html>\\n<head>\\n    \\n    <title>PyLadies &ndash; Women Who Love Coding in Python</title>\\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1\"/>\\n    <link rel=\"stylesheet\" href=\"/assets/css/pygments.css\" media=\"screen\" title=\"screen\"/>\\n    <link rel=\"stylesheet\" href=\"/assets/css/screen.css\" media=\"screen\" title=\"screen\"/>\\n    <link rel=\"stylesheet\" href=\"/assets/css/mailchimp.css\" media=\"screen\" title=\"screen\"/>\\n    <link href=\\'http://fonts.googleapis.com/css?family=Glegoo|Bitter|Droid+Serif:400,700,400italic,700italic|Raleway:400,200,300,500,600,700\\' rel=\\'stylesheet\\' type=\\'text/css\\'/>\\n    <link rel=\"shortcut icon\" href=\"/assets/images/favicon.ico\" type=\"image/ico\" />\\n    <link rel=\"alternate\" type=\"application/atom+xml\" title=\"Atom 1.0\" href=\"http://pyladies.com/feed.xml\" />\\n    <script src=\"//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js\"></script>\\n\\t\\n    <script src=\"https://platform.twitter.com/widgets.js\" type=\"text/javascript\"></script>\\n    <script type=\"text/javascript\" src=\"/assets/js/meetup_widget.js\"></script>\\n    <script type=\"text/javascript\">\\n        $(document).ready(function() {\\n            var meetupIds = \"8160762,4507652,5947662,9301202,9206152,8623152,5160912,8401402,18320041,2292131,13320732,15507962,13995752,9042722,13106102,2288171,186995752,14872062,193620926,185768797,4576312,201759643,18600594,185065560,4808882,16760422,8161032,5089102,3604052,5411282,10708842,19180337,14910222,7660062,14748112,6488102,18607403,7538042,2292131\";\\n            PyladiesMeetupWidget.addUpcomingMeetups(meetupIds);\\n        });\\n\\t</script>\\n\\t\\n\\t\\n\\t\\n</head>\\n\\n<body>\\n    <a href=\"https://github.com/pyladies/pyladies\" class=\"github-corner\"><svg width=\"80\" height=\"80\" viewBox=\"0 0 250 250\" style=\"fill:rgb(255, 100, 100); color:#fff; position: absolute; top: 0; border: 0; left: 0; transform: scale(-1, 1);\"><path d=\"M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z\"></path><path d=\"M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2\" fill=\"currentColor\" style=\"transform-origin: 130px 106px;\" class=\"octo-arm\"></path><path d=\"M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z\" fill=\"currentColor\" class=\"octo-body\"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>\\n    <div class=\"header\">\\n        <div id=\"pyladies_header_logo\">\\n            <a href=\"/\"><img src=\"/assets/images/pyladies_logo.png\" width=\"260\" height=\"120\" alt=\"PyLadies Logo\"/></a>\\n        </div>\\n        <nav>\\n            <ul class=\"nav-wrapper\">\\n                <li><a href=\"/\">Home</a></li>\\n                <li><a href=\"/about/\">About</a></li>\\n                <li><a href=\"http://discuss.pyladies.com\">Forum</a></li>\\n                <li><a href=\"/locations/\">Locations</a></li>\\n                <li><a href=\"/blog/\">Blog</a></li>\\n                <li><a href=\"/CodeOfConduct/\">Code of Conduct</a></li>\\n                <li><a href=\"/resources/\">Resources</a></li>\\n                <li><a href=\"mailto:info@pyladies.com?subject=Hello\" id=\"contact-link\">Contact</a></li>\\n                <li><a href=\"http://pyladies.com/feed.xml\" title=\"RSS\">RSS</a></li>\\n            </ul>\\n        </nav>\\n    </div>\\n    <div class=\"page\">\\n        \\n    <h1 id=\"homepage_h1\">Welcome!</h1>\\n    <section id=\"archive\">\\n        <article class=\"welcome\">\\n            <div id=\"welcome_message\">\\n                    <h2>Welcome!</h2>\\n                    <img src=\"/assets/images/pylady_geek.png\" alt=\"Pyladies lady graphic\" />\\n                    <p>We are an international mentorship group with a focus on helping more women become active participants and leaders in the Python open-source community. Our mission is to promote, educate and advance a diverse Python community through outreach, education, conferences, events and social gatherings.</p>\\n                    <p>PyLadies also aims to provide a friendly support network for women and a bridge to the larger Python world. Anyone with an interest in Python is encouraged to participate!</p>\\n            </div>\\n        </article>\\n\\n        <article class=\"latest\">\\n            <h3 class=\"latest-master\">Latest Blog Posts</h3>\\n                <div id=\"latestBlog\">\\n                    \\n                        <h3><a href=\"/blog/Web-Development/django-resources/\">Web Development</a></h3>\\n                        <time pubdate datetime=\"2015-05-03\">May 03, 2015</time>\\n                        <p><a href=\"http://www.djangoproject.com/\">Django</a> is one of the most popular web frameworks. It&rsquo;s a great option if you want to use Python to build web apps.  Start with <a href=\"https://docs.djangoproject.com/en/1.4/intro/tutorial01/\">the official Django poll tutorial</a> or the <a href=\"http://tutorial.djangogirls.org/\">Django Girls blog tutorial</a>.  <a href=\"http://twoscoopspress.com/products/two-scoops-of-django-1-8\">Two Scoops of Django: Best Practices For Django 1.8</a> was co-written by a PyLady - don&rsquo;t hesitate to ask for a free copy if you can&rsquo;t afford it.  <a href=\"/blog/Web-Development/django-resources/\" class=\\'more-link\\'>Read more &rarr;</a></p>\\n                    \\n                        <h3><a href=\"/blog/A-PyLadies-packed-PyCon-2015/pyladies-at-pycon/\">A PyLadies-packed PyCon 2015</a></h3>\\n                        <time pubdate datetime=\"2015-03-23\">March 23, 2015</time>\\n                        <p>Want to pack your PyCon schedule with PyLadies events?  Here are all the details!  <a href=\"/blog/A-PyLadies-packed-PyCon-2015/pyladies-at-pycon/\" class=\\'more-link\\'>Read more &rarr;</a></p>\\n                    \\n                </div>\\n        </article>\\n    </section>\\n\\n\\n    </div>\\n\\n\\t<div class=\"sidebar\">\\n\\t\\t\\n        <div id=\"mc_embed_signup\">\\n            <form action=\"http://pyladies.us2.list-manage1.com/subscribe/post?u=9d20e0bc6bc0e88a076738c6f&amp;id=23e4f35e45\" method=\"post\" id=\"mc-embedded-subscribe-form\" name=\"mc-embedded-subscribe-form\" class=\"validate\" target=\"_blank\" novalidate>\\n                <label for=\"mce-EMAIL\">Keep up with what\\'s going in the PyLadies community on our low-volume announcement list.  Men and women from everywhere are welcome.  Unsubscribe anytime. </label>\\n                <input type=\"email\" value=\"\" name=\"EMAIL\" class=\"email\" id=\"mce-EMAIL\" placeholder=\"email address\" required>\\n                <div class=\"clear\"><input type=\"submit\" value=\"Subscribe\" name=\"subscribe\" id=\"mc-embedded-subscribe\" class=\"button\"></div>\\n            </form>\\n        </div>\\n\\n        <div id=\"sponsor_us_btn\"><a href=\"/sponsor/\">Sponsor Us</a></div>\\n\\n        <div id=\"shirts_btn\" style=\"display:flex;justify-content:center;align-items:center;font-size:14px;\"><a href=\"http://pyladies.spreadshirt.com/\">Get Swag</a></div>\\n\\n        <div id=\"stickers_btn\" style=\"display:flex;justify-content:center;align-items:center;font-size:14px;\"><a href=\"https://www.stickermule.com/user/1070441144/stickers\">Buy Stickers</a></div>\\n\\n        <h3>Upcoming Meetups</h3>\\n        <div id=\"upcomingMeetupsList\">\\n        </div>\\n\\n        <div id=\"twitter_feed\">\\n            <h3>Recent Tweets</h3>\\n            <div id=\"chapter_tweets\">\\n                <a class=\"twitter-timeline\" href=\"https://twitter.com/pyladies/lists/pyladies-locations\" data-widget-id=\"635861904234258433\">Tweets from https://twitter.com/pyladies/lists/pyladies-locations</a>\\n                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\\'http\\':\\'https\\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\"://platform.twitter.com/widgets.js\";fjs.parentNode.insertBefore(js,fjs);}}(document,\"script\",\"twitter-wjs\");</script>\\n            </div>\\n\\t\\t</div>\\n\\t\\t\\n    </div>\\n\\n    <div class=\"footer-wrapper\">\\n            <footer id=\"bottom\">\\n\\t\\t\\t\\n                <ul class=\"social\">\\n                    <li><a class=\"icon google-plus\" data-icon=\"&#62223;\" href=\"https://plus.google.com/communities/108807002736066163985\" title=\"Google+\"></a></li>\\n                    <li><a class=\"icon github\" data-icon=\"&#62208;\" href=\"http://github.com/pyladies\" title=\"GitHub\"></a></li>\\n                    <li><a class=\"icon rss\" data-icon=\"&#59194;\" href=\"http://pyladies.com/feed.xml\" title=\"RSS\"></a></li>\\n                    <li><a class=\"icon creative-commons\" data-icon=\"&#128325;\" href=\"http://creativecommons.org/licenses/by-sa/3.0/\" title=\"Creative Commons\"></a></li>\\n                    <ul class=\"footer-notice\">\\n                        <li>2007 - 2016 PyLadies. All Rights Reserved.</li>\\n                        <li>Disclaimer - PyLadies and the PyLadies logo are trademarks of the Python Software Foundation</li>\\n                    </ul>\\n                </ul>\\n            \\n            </footer>\\n    </div>\\n\\n    <script type=\"text/javascript\">\\n\\n      var _gaq = _gaq || [];\\n      _gaq.push([\\'_setAccount\\', \\'UA-36930002-1\\']);\\n      _gaq.push([\\'_trackPageview\\']);\\n\\n      (function() {\\n        var ga = document.createElement(\\'script\\'); ga.type = \\'text/javascript\\'; ga.async = true;\\n        ga.src = (\\'https:\\' == document.location.protocol ? \\'https://ssl\\' : \\'http://www\\') + \\'.google-analytics.com/ga.js\\';\\n        var s = document.getElementsByTagName(\\'script\\')[0]; s.parentNode.insertBefore(ga, s);\\n      })();\\n\\n    </script>\\n\\n</body>\\n</html>'"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    " url = \"http://pyladies.com\"\n",
+    "source = urllib.request.urlopen(url).read()\n",
+    "source"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "False\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(b'python' in source)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "b'<!doctype html><html itemscope=\"\" itemtype=\"http://schema.org/WebPage\" lang=\"en\"><head><meta content=\"Search the world\\'s information, including webpages, images, videos and more. Google has many special features to help you find exactly what you\\'re looking for.\" name=\"description\"><meta content=\"noodp\" name=\"robots\"><meta content=\"text/html; charset=UTF-8\" http-equiv=\"Content-Type\"><meta content=\"/images/branding/googleg/1x/googleg_standard_color_128dp.png\" itemprop=\"image\"><title>Google</title><script>(function(){window.google={kEI:\\'jCFjV-bmDIfbe_nAuZgG\\',kEXPI:\\'1350755,3700281,3700389,4029815,4031109,4032678,4036509,4036527,4038012,4039268,4041303,4043492,4045841,4048347,4052304,4057739,4059767,4061155,4062333,4062983,4063156,4063879,4063929,4064133,4064702,4064966,4065120,4065284,4065675,4065786,4065918,4066102,4066654,4066655,4066686,4066965,4066973,4067274,4067518,4067654,4067848,4067860,4067867,4067924,4067940,4068002,4068022,4068173,4068196,4068550,4068717,4068776,4068850,4068865,4069145,4069149,4069166,4069284,4069404,4069690,4069705,4069834,4069839,4069841,4069962,4070086,8300095,8300273,8502095,8502349,8503585,8504350,8504907,8504931,8505158,8505164,8505166,8505509,8505593,10200083,10201287,10201917,10201927,16200027\\',authuser:0,kscs:\\'c9c918f0_24\\'};google.kHL=\\'en\\';})();(function(){google.lc=[];google.li=0;google.getEI=function(a){for(var b;a&&(!a.getAttribute||!(b=a.getAttribute(\"eid\")));)a=a.parentNode;return b||google.kEI};google.getLEI=function(a){for(var b=null;a&&(!a.getAttribute||!(b=a.getAttribute(\"leid\")));)a=a.parentNode;return b};google.https=function(){return\"https:\"==window.location.protocol};google.ml=function(){return null};google.wl=function(a,b){try{google.ml(Error(a),!1,b)}catch(c){}};google.time=function(){return(new Date).getTime()};google.log=function(a,b,c,e,g){a=google.logUrl(a,b,c,e,g);if(\"\"!=a){b=new Image;var d=google.lc,f=google.li;d[f]=b;b.onerror=b.onload=b.onabort=function(){delete d[f]};window.google&&window.google.vel&&window.google.vel.lu&&window.google.vel.lu(a);b.src=a;google.li=f+1}};google.logUrl=function(a,b,c,e,g){var d=\"\",f=google.ls||\"\";if(!c&&-1==b.search(\"&ei=\")){var h=google.getEI(e),d=\"&ei=\"+h;-1==b.search(\"&lei=\")&&((e=google.getLEI(e))?d+=\"&lei=\"+e:h!=google.kEI&&(d+=\"&lei=\"+google.kEI))}a=c||\"/\"+(g||\"gen_204\")+\"?atyp=i&ct=\"+a+\"&cad=\"+b+d+f+\"&zx=\"+google.time();/^http:/i.test(a)&&google.https()&&(google.ml(Error(\"a\"),!1,{src:a,glmm:1}),a=\"\");return a};google.y={};google.x=function(a,b){google.y[a.id]=[a,b];return!1};google.load=function(a,b,c){google.x({id:a+k++},function(){google.load(a,b,c)})};var k=0;})();var _gjwl=location;function _gjuc(){var a=_gjwl.href.indexOf(\"#\");if(0<=a&&(a=_gjwl.href.substring(a),0<a.indexOf(\"&q=\")||0<=a.indexOf(\"#q=\"))&&(a=a.substring(1),-1==a.indexOf(\"#\"))){for(var d=0;d<a.length;){var b=d;\"&\"==a.charAt(b)&&++b;var c=a.indexOf(\"&\",b);-1==c&&(c=a.length);b=a.substring(b,c);if(0==b.indexOf(\"fp=\"))a=a.substring(0,d)+a.substring(c,a.length),c=d;else if(\"cad=h\"==b)return 0;d=c}_gjwl.href=\"/search?\"+a+\"&cad=h\";return 1}return 0}\\nfunction _gjh(){!_gjuc()&&window.google&&google.x&&google.x({id:\"GJH\"},function(){google.nav&&google.nav.gjh&&google.nav.gjh()})};window._gjh&&_gjh();</script><style>#gbar,#guser{font-size:13px;padding-top:1px !important;}#gbar{height:22px}#guser{padding-bottom:7px !important;text-align:right}.gbh,.gbd{border-top:1px solid #c9d7f1;font-size:1px}.gbh{height:0;position:absolute;top:24px;width:100%}@media all{.gb1{height:22px;margin-right:.5em;vertical-align:top}#gbar{float:left}}a.gb1,a.gb4{text-decoration:underline !important}a.gb1,a.gb4{color:#00c !important}.gbi .gb4{color:#dd8e27 !important}.gbf .gb4{color:#900 !important}\\n</style><style>body,td,a,p,.h{font-family:arial,sans-serif}body{margin:0;overflow-y:scroll}#gog{padding:3px 8px 0}td{line-height:.8em}.gac_m td{line-height:17px}form{margin-bottom:20px}.h{color:#36c}.q{color:#00c}.ts td{padding:0}.ts{border-collapse:collapse}em{font-weight:bold;font-style:normal}.lst{height:25px;width:496px}.gsfi,.lst{font:18px arial,sans-serif}.gsfs{font:17px arial,sans-serif}.ds{display:inline-box;display:inline-block;margin:3px 0 4px;margin-left:4px}input{font-family:inherit}a.gb1,a.gb2,a.gb3,a.gb4{color:#11c !important}body{background:#fff;color:black}a{color:#11c;text-decoration:none}a:hover,a:active{text-decoration:underline}.fl a{color:#36c}a:visited{color:#551a8b}a.gb1,a.gb4{text-decoration:underline}a.gb3:hover{text-decoration:none}#ghead a.gb2:hover{color:#fff !important}.sblc{padding-top:5px}.sblc a{display:block;margin:2px 0;margin-left:13px;font-size:11px}.lsbb{background:#eee;border:solid 1px;border-color:#ccc #999 #999 #ccc;height:30px}.lsbb{display:block}.ftl,#fll a{display:inline-block;margin:0 12px}.lsb{background:url(/images/nav_logo229.png) 0 -261px repeat-x;border:none;color:#000;cursor:pointer;height:30px;margin:0;outline:0;font:15px arial,sans-serif;vertical-align:top}.lsb:active{background:#ccc}.lst:focus{outline:none}</style><script></script><link href=\"/images/branding/product/ico/googleg_lodp.ico\" rel=\"shortcut icon\"></head><body bgcolor=\"#fff\"><script>(function(){var src=\\'/images/nav_logo229.png\\';var iesg=false;document.body.onload = function(){window.n && window.n();if (document.images){new Image().src=src;}\\nif (!iesg){document.f&&document.f.q.focus();document.gbqf&&document.gbqf.q.focus();}\\n}\\n})();</script><div id=\"mngb\">    <div id=gbar><nobr><b class=gb1>Search</b> <a class=gb1 href=\"http://www.google.com/imghp?hl=en&tab=wi\">Images</a> <a class=gb1 href=\"http://maps.google.com/maps?hl=en&tab=wl\">Maps</a> <a class=gb1 href=\"https://play.google.com/?hl=en&tab=w8\">Play</a> <a class=gb1 href=\"http://www.youtube.com/?tab=w1\">YouTube</a> <a class=gb1 href=\"http://news.google.com/nwshp?hl=en&tab=wn\">News</a> <a class=gb1 href=\"https://mail.google.com/mail/?tab=wm\">Gmail</a> <a class=gb1 href=\"https://drive.google.com/?tab=wo\">Drive</a> <a class=gb1 style=\"text-decoration:none\" href=\"https://www.google.com/intl/en/options/\"><u>More</u> &raquo;</a></nobr></div><div id=guser width=100%><nobr><span id=gbn class=gbi></span><span id=gbf class=gbf></span><span id=gbe></span><a href=\"http://www.google.com/history/optout?hl=en\" class=gb4>Web History</a> | <a  href=\"/preferences?hl=en\" class=gb4>Settings</a> | <a target=_top id=gb_70 href=\"https://accounts.google.com/ServiceLogin?hl=en&passive=true&continue=http://www.google.com/\" class=gb4>Sign in</a></nobr></div><div class=gbh style=left:0></div><div class=gbh style=right:0></div>    </div><center><br clear=\"all\" id=\"lgpd\"><div id=\"lga\"><img alt=\"Google\" height=\"92\" src=\"/images/branding/googlelogo/1x/googlelogo_white_background_color_272x92dp.png\" style=\"padding:28px 0 14px\" width=\"272\" id=\"hplogo\" onload=\"window.lol&&lol()\"><br><br></div><form action=\"/search\" name=\"f\"><table cellpadding=\"0\" cellspacing=\"0\"><tr valign=\"top\"><td width=\"25%\">&nbsp;</td><td align=\"center\" nowrap=\"\"><input name=\"ie\" value=\"ISO-8859-1\" type=\"hidden\"><input value=\"en\" name=\"hl\" type=\"hidden\"><input name=\"source\" type=\"hidden\" value=\"hp\"><input name=\"biw\" type=\"hidden\"><input name=\"bih\" type=\"hidden\"><div class=\"ds\" style=\"height:32px;margin:4px 0\"><input style=\"color:#000;margin:0;padding:5px 8px 0 6px;vertical-align:top\" autocomplete=\"off\" class=\"lst\" value=\"\" title=\"Google Search\" maxlength=\"2048\" name=\"q\" size=\"57\"></div><br style=\"line-height:0\"><span class=\"ds\"><span class=\"lsbb\"><input class=\"lsb\" value=\"Google Search\" name=\"btnG\" type=\"submit\"></span></span><span class=\"ds\"><span class=\"lsbb\"><input class=\"lsb\" value=\"I\\'m Feeling Lucky\" name=\"btnI\" onclick=\"if(this.form.q.value)this.checked=1; else top.location=\\'/doodles/\\'\" type=\"submit\"></span></span></td><td class=\"fl sblc\" align=\"left\" nowrap=\"\" width=\"25%\"><a href=\"/advanced_search?hl=en&amp;authuser=0\">Advanced search</a><a href=\"/language_tools?hl=en&amp;authuser=0\">Language tools</a></td></tr></table><input id=\"gbv\" name=\"gbv\" type=\"hidden\" value=\"1\"></form><div id=\"gac_scont\"></div><div style=\"font-size:83%;min-height:3.5em\"><br></div><span id=\"footer\"><div style=\"font-size:10pt\"><div style=\"margin:19px auto;text-align:center\" id=\"fll\"><a href=\"/intl/en/ads/\">Advertising\\xa0Programs</a><a href=\"/services/\">Business Solutions</a><a href=\"https://plus.google.com/116899029375914044550\" rel=\"publisher\">+Google</a><a href=\"/intl/en/about.html\">About Google</a></div></div><p style=\"color:#767676;font-size:8pt\">&copy; 2016 - <a href=\"/intl/en/policies/privacy/\">Privacy</a> - <a href=\"/intl/en/policies/terms/\">Terms</a></p></span></center><script>(function(){window.google.cdo={height:0,width:0};(function(){var a=window.innerWidth,b=window.innerHeight;if(!a||!b)var c=window.document,d=\"CSS1Compat\"==c.compatMode?c.documentElement:c.body,a=d.clientWidth,b=d.clientHeight;a&&b&&(a!=google.cdo.width||b!=google.cdo.height)&&google.log(\"\",\"\",\"/client_204?&atyp=i&biw=\"+a+\"&bih=\"+b+\"&ei=\"+google.kEI);})();})();</script><div id=\"xjsd\"></div><div id=\"xjsi\"><script>(function(){function c(b){window.setTimeout(function(){var a=document.createElement(\"script\");a.src=b;document.getElementById(\"xjsd\").appendChild(a)},0)}google.dljp=function(b,a){google.xjsu=b;c(a)};google.dlj=c;})();(function(){window.google.xjsrm=[];})();if(google.y)google.y.first=[];if(!google.xjs){window._=window._||{};window._._DumpException=function(e){throw e};if(google.timers&&google.timers.load.t){google.timers.load.t.xjsls=new Date().getTime();}google.dljp(\\'/xjs/_/js/k\\\\x3dxjs.hp.en_US.rYjxD_8aA4s.O/m\\\\x3dsb_he,d/rt\\\\x3dj/d\\\\x3d1/t\\\\x3dzcms/rs\\\\x3dACT90oFMZ68st0olV7XmzYYfyEXb4ac7nw\\',\\'/xjs/_/js/k\\\\x3dxjs.hp.en_US.rYjxD_8aA4s.O/m\\\\x3dsb_he,d/rt\\\\x3dj/d\\\\x3d1/t\\\\x3dzcms/rs\\\\x3dACT90oFMZ68st0olV7XmzYYfyEXb4ac7nw\\');google.xjs=1;}google.pmc={\"sb_he\":{\"agen\":true,\"cgen\":true,\"client\":\"heirloom-hp\",\"dh\":true,\"dhqt\":true,\"ds\":\"\",\"fl\":true,\"host\":\"google.com\",\"isbh\":28,\"jam\":0,\"jsonp\":true,\"msgs\":{\"cibl\":\"Clear Search\",\"dym\":\"Did you mean:\",\"lcky\":\"I\\\\u0026#39;m Feeling Lucky\",\"lml\":\"Learn more\",\"oskt\":\"Input tools\",\"psrc\":\"This search was removed from your \\\\u003Ca href=\\\\\"/history\\\\\"\\\\u003EWeb History\\\\u003C/a\\\\u003E\",\"psrl\":\"Remove\",\"sbit\":\"Search by image\",\"srch\":\"Google Search\"},\"nds\":true,\"ovr\":{},\"pq\":\"\",\"refpd\":true,\"rfs\":[],\"scd\":10,\"sce\":5,\"stok\":\"25TVf761ruq72y8Su4l_O81NDis\"},\"d\":{}};google.y.first.push(function(){if(google.med){google.med(\\'init\\');google.initHistory();google.med(\\'history\\');}});if(google.j&&google.j.en&&google.j.xi){window.setTimeout(google.j.xi,0);}\\n</script></div></body></html>'"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "urlb = \"http://google.com\"\n",
+    "sourceone = urllib.request.urlopen(urlb).read()\n",
+    "sourceone"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<function bytes.title>"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "sourceone.title"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "True\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(b'img' in sourceone)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "5480"
+      ]
+     },
+     "execution_count": 15,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "position = sourceone.find(b'img')\n",
+    "position"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "b'href=\"https://docs.d'\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(source[position:position+20])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "from selenium import webdriver"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "from selenium.webdriver.common.keys import Keys\n",
+    "from selenium.webdriver.common.action_chains import ActionChains\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "browser = webdriver.Chrome()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 63,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<selenium.webdriver.remote.webelement.WebElement (session=\"68c0b956e766f5aa3477497694b924a1\", element=\"0.07732534229853139-1\")>"
+      ]
+     },
+     "execution_count": 63,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "browser.find_element_by_tag_name('input')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 64,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "input = browser.find_element_by_tag_name('input')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 65,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "input.send_keys('selenium')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 66,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "input.send_keys('selenium',Keys.RETURN)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "browser.get(\"http://netflix.com\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 79,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "browser.find_element_by_link_text('Sign In').click()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "email = browser.find_element_by_css_selector('input#email')\n",
+    "email.send_keys(MY_EMAIL)\n",
+    "pw = browser.find_element_by_css_selector('input#password')\n",
+    "pw.send_keys(MY_PASSWORD,Keys.RETURN)\n",
+    "browser.implicitly_wait(10)  ### JUST AN EXAMPLE."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 148,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "browser.get(\"http://google.com\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 149,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-1\")>"
+      ]
+     },
+     "execution_count": 149,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "browser.find_element_by_tag_name('input')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "scroll = ActionChains(browser).move_to_element(input)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 150,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "input = browser.find_element_by_tag_name('input')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 151,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'x': 0, 'y': 0}"
+      ]
+     },
+     "execution_count": 151,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "input.location"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 152,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[<selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-1\")>,\n",
+       " <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-2\")>,\n",
+       " <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-3\")>,\n",
+       " <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-4\")>,\n",
+       " <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-5\")>,\n",
+       " <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-6\")>,\n",
+       " <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-7\")>,\n",
+       " <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-8\")>,\n",
+       " <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-9\")>,\n",
+       " <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-10\")>,\n",
+       " <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-11\")>,\n",
+       " <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-12\")>]"
+      ]
+     },
+     "execution_count": 152,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "browser.find_elements_by_tag_name('input')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 153,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "browser.find_elements_by_tag_name('a')[2].send_keys('Selenium') ## 'a' tag for entering. Success. Phew."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 163,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-13\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-14\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-15\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-16\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-17\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-18\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-19\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-20\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-21\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-22\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-23\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-24\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-25\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-26\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-27\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-28\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-29\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-30\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-31\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-32\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-33\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-34\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-35\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-36\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-37\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-38\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-39\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-40\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-41\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-42\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-43\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-44\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-60\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-61\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-62\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-63\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-45\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-46\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-47\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-48\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-49\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-50\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-51\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-52\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-53\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-54\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-55\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-56\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-57\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-58\")>>\n",
+      "<bound method WebElement.click of <selenium.webdriver.remote.webelement.WebElement (session=\"acad01d66eb6a8e85e87504539971aa1\", element=\"0.710302140800871-59\")>>\n"
+     ]
+    }
+   ],
+   "source": [
+    "for a in browser.find_elements_by_tag_name('a'):\n",
+    "    print(a.click)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 221,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "browser.get(\"http://yahoo.com\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 253,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "assert 'Yahoo' in browser.title\n",
+    "\n",
+    "elem = browser.find_element_by_name('p')  # Find the search box\n",
+    "elem.send_keys('Price' + Keys.RETURN)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 269,
+   "metadata": {
+    "collapsed": false,
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "20% Off + Free Shipping on $99+ At Dr. Sinatra's Official Site.\n",
+      "18\" 600W Woofer Fast Free Shipping - 5 Star Service\n",
+      "rating\n",
+      "Douglas Laboratories Products.Fast, Free Shipping - Shop Now!\n",
+      "Selenium Vitamin E - 90 Softgels\n",
+      "Search Prices at Your Local Pharmacy Using GoodRx. Compare and Save.\n",
+      "rating\n",
+      "Limited Time Sale Buy 1 Get 2 Free. Plus Free Shipping!\n",
+      "Selenium Supplements | Selenium Products | Puritan's Pride\n",
+      "SeleniumPrice\n",
+      "rating\n",
+      "Douglas Laboratories Products.Fast, Free Shipping - Shop Now!\n",
+      "18\" 600W Woofer Fast Free Shipping - 5 Star Service\n",
+      "20% Off + Free Shipping on $99+ At Dr. Sinatra's Official Site.\n",
+      "rating\n",
+      "Buy Discount Buy selenium./ Free Shipping On Order Over $100!\n",
+      "rating\n",
+      "Selenium 6W4P Mid-Bass Woofer. Free Shipping on Qualified Orders.\n",
+      "70% OFF. Lowest Price On Selenium 180. Free shipping, in stock. Buy now!\n"
+     ]
+    }
+   ],
+   "source": [
+    "for a in browser.find_elements_by_css_selector('p a'):\n",
+    "    print(a.text)\n",
+    "#browser.find_element_by_name('p').clear() --- To Clear the text content"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "browser.find_element_by_name('p').clear() ## To Clear the text content"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "anaconda-cloud": {},
+  "kernelspec": {
+   "display_name": "Python [Root]",
+   "language": "python",
+   "name": "Python [Root]"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.5.2"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 0
+}

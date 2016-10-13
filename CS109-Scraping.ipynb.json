@@ -1,0 +1,4280 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 56,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "## all imports\n",
+    "from IPython.display import HTML\n",
+    "import numpy as np\n",
+    "import urllib.request\n",
+    "import urllib.parse\n",
+    "from bs4 import BeautifulSoup #this is beautiful soup\n",
+    "\n",
+    "from pandas import Series\n",
+    "import pandas as pd\n",
+    "from pandas import DataFrame\n",
+    "\n",
+    "import matplotlib\n",
+    "import matplotlib.pyplot as plt\n",
+    "%matplotlib inline\n",
+    "\n",
+    "import seaborn as sns\n",
+    "sns.set_context(\"talk\")\n",
+    "sns.set_style(\"white\")"
+   ]
+  },
+  {
+   "cell_type": "raw",
+   "metadata": {},
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 57,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "b'<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\"\\n\"http://www.w3.org/TR/REC-html40/transitional.dtd\">\\n<html>\\n<head>\\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\\n<title>Beautiful Soup: We called him Tortoise because he taught us.</title>\\n<link rev=\"made\" href=\"mailto:leonardr@segfault.org\">\\n<link rel=\"stylesheet\" type=\"text/css\" href=\"/nb/themes/Default/nb.css\">\\n<meta name=\"Description\" content=\"Beautiful Soup: a library designed for screen-scraping HTML and XML.\">\\n<meta name=\"generator\" content=\"Markov Approximation 1.4 (module: leonardr)\">\\n<meta name=\"author\" content=\"Leonard Richardson\">\\n</head>\\n<body bgcolor=\"white\" text=\"black\" link=\"blue\" vlink=\"660066\" alink=\"red\">\\n<img align=\"right\" src=\"10.1.jpg\" width=\"250\"><br />\\n\\n<p>You didn\\'t write that awful page. You\\'re just trying to get some\\ndata out of it. Beautiful Soup is here to help. Since 2004, it\\'s been\\nsaving programmers hours or days of work on quick-turnaround\\nscreen scraping projects.</p>\\n\\n<div align=\"center\">\\n\\n<a href=\"bs4/download/\"><h1>Beautiful Soup</h1></a>\\n\\n<p>\"A tremendous boon.\" -- Python411 Podcast</p>\\n\\n<p>[ <a href=\"#Download\">Download</a> | <a\\nhref=\"bs4/doc/\">Documentation</a> | <a href=\"#HallOfFame\">Hall of Fame</a> | <a href=\"https://code.launchpad.net/beautifulsoup\">Source</a> | <a href=\"https://groups.google.com/forum/?fromgroups#!forum/beautifulsoup\">Discussion group</a> ]</p>\\n\\n<small>If Beautiful Soup has saved you a lot of time and money, the\\nbest way to pay me back is to check out <a\\nhref=\"http://www.candlemarkandgleam.com/shop/constellation-games/\"><i>Constellation\\nGames</i>, my sci-fi novel about alien video games</a>.<br />You can\\n<a\\nhref=\"http://constellation.crummy.com/Constellation%20Games%20excerpt.html\">read\\nthe first two chapters for free</a>, and the full novel starts at 5\\nUSD. Thanks!</small> </div>\\n\\n<p><i>If you have questions, send them to <a\\nhref=\"https://groups.google.com/forum/?fromgroups#!forum/beautifulsoup\">the discussion\\ngroup</a>. If you find a bug, <a href=\"https://bugs.launchpad.net/beautifulsoup/\">file it</a>.</i></p>\\n\\n<p>Beautiful Soup is a Python library designed for quick turnaround\\nprojects like screen-scraping. Three features make it powerful:\\n\\n<ol>\\n\\n<li>Beautiful Soup provides a few simple methods and Pythonic idioms\\nfor navigating, searching, and modifying a parse tree: a toolkit for\\ndissecting a document and extracting what you need. It doesn\\'t take\\nmuch code to write an application\\n\\n<li>Beautiful Soup automatically converts incoming documents to\\nUnicode and outgoing documents to UTF-8. You don\\'t have to think\\nabout encodings, unless the document doesn\\'t specify an encoding and\\nBeautiful Soup can\\'t detect one. Then you just have to specify the\\noriginal encoding.\\n\\n<li>Beautiful Soup sits on top of popular Python parsers like <a\\nhref=\"http://lxml.de/\">lxml</a> and <a\\nhref=\"http://code.google.com/p/html5lib/\">html5lib</a>, allowing you\\nto try out different parsing strategies or trade speed for\\nflexibility.\\n\\n</ol>\\n\\n<p>Beautiful Soup parses anything you give it, and does the tree\\ntraversal stuff for you. You can tell it \"Find all the links\", or\\n\"Find all the links of class <tt>externalLink</tt>\", or \"Find all the\\nlinks whose urls match \"foo.com\", or \"Find the table heading that\\'s\\ngot bold text, then give me that text.\"\\n\\n<p>Valuable data that was once locked up in poorly-designed websites\\nis now within your reach. Projects that would have taken hours take\\nonly minutes with Beautiful Soup.\\n\\n<p>Interested? <a href=\"bs4/doc/\">Read more.</a>\\n\\n<a name=\"Download\"><h2>Download Beautiful Soup</h2></a>\\n\\n<p>The current release is <a href=\"bs4/download/\">Beautiful Soup\\n4.4.1</a> (September 28, 2015). You can install Beautiful Soup 4 with\\n<code>pip install beautifulsoup4</code>. It\\'s also available as the\\n<code>python-beautifulsoup4</code> package in Debian, Ubuntu, and\\nFedora.\\n\\n<p>Beautiful Soup 4 works on both Python 2 (2.6+) and Python 3.\\n\\n<p>Beautiful Soup is licensed under the MIT license, so you can also\\ndownload the tarball, drop the <code>bs4/</code> directory into almost\\nany Python application (or into your library path) and start using it\\nimmediately. (If you want to do this under Python 3, you will need to\\nmanually convert the code using <code>2to3</code>.)\\n\\n<h3>Beautiful Soup 3</h3>\\n\\n<p>Beautiful Soup 3 was the official release line of Beautiful Soup\\nfrom May 2006 to March 2012. It is considered stable, and only\\ncritical security bugs will be fixed. <a\\nhref=\"http://www.crummy.com/software/BeautifulSoup/bs3/documentation.html\">Here\\'s\\nthe Beautiful Soup 3 documentation.</a>\\n\\n<p>Beautiful Soup 3 works only under Python 2.x. It is licensed under\\nthe same license as Python itself.\\n\\n<p>The current release of Beautiful Soup 3 is <a\\nhref=\"download/3.x/BeautifulSoup-3.2.1.tar.gz\">3.2.1</a> (February 16,\\n2012). You can install Beautiful Soup 3 with <code>pip install\\nBeautifulSoup</code>. It\\'s also available as\\n<code>python-beautifulsoup</code> in Debian and Ubuntu, and as\\n<code>python-BeautifulSoup</code> in Fedora.\\n\\n<p>You can also download the tarball and use\\n<code>BeautifulSoup.py</code> in your project directly.\\n\\n\\n<a name=\"HallOfFame\"><h2>Hall of Fame</h2></a>\\n\\n<p>Over the years, Beautiful Soup has been used in hundreds of\\ndifferent projects. There\\'s no way I can list them all, but I want to\\nhighlight a few high-profile projects. Beautiful Soup isn\\'t what makes\\nthese projects interesting, but it did make their completion easier:\\n\\n<ul>\\n\\n<li><a\\n href=\"http://www.nytimes.com/2007/10/25/arts/design/25vide.html\">\"Movable\\n Type\"</a>, a work of digital art on display in the lobby of the New\\n York Times building, uses Beautiful Soup to scrape news feeds.\\n\\n<li>Reddit uses Beautiful Soup to <a\\nhref=\"https://github.com/reddit/reddit/blob/85f9cff3e2ab9bb8f19b96acd8da4ebacc079f04/r2/r2/lib/media.py\">parse\\na page that\\'s been linked to and find a representative image</a>.\\n\\n<li>Alexander Harrowell uses Beautiful Soup to <a\\n href=\"http://www.harrowell.org.uk/viktormap.html\">track the business\\n activities</a> of an arms merchant.\\n\\n<li>The developers of Python itself used Beautiful Soup to <a\\nhref=\"http://svn.python.org/view/tracker/importer/\">migrate the Python\\nbug tracker from Sourceforge to Roundup</a>.\\n\\n<li>The <a href=\"http://www2.ljworld.com/\">Lawrence Journal-World</a>\\nuses Beautiful Soup to <A\\nhref=\"http://www.b-list.org/weblog/2010/nov/02/news-done-broke/\">gather\\nstatewide election results</a>.\\n\\n<li>The <a href=\"http://esrl.noaa.gov/gsd/fab/\">NOAA\\'s Forecast\\nApplications Branch</a> uses Beautiful Soup in <a\\nhref=\"http://laps.noaa.gov/topograbber/\">TopoGrabber</a>, a script for\\ndownloading \"high resolution USGS datasets.\"\\n\\n</ul>\\n\\n<p>If you\\'ve used Beautiful Soup in a project you\\'d like me to know\\nabout, please do send email to me or <a\\nhref=\"http://groups.google.com/group/beautifulsoup/\">the discussion\\ngroup</a>.\\n\\n<h2>Development</h2>\\n\\n<p>Development happens at <a\\nhref=\"https://launchpad.net/beautifulsoup\">Launchpad</a>. You can <a\\nhref=\"https://code.launchpad.net/beautifulsoup/\">get the source\\ncode</a> or <a href=\"https://bugs.launchpad.net/beautifulsoup/\">file\\nbugs</a>.<hr><table><tr><td valign=\"top\">\\n<p>This document (<a href=\"/source/software/BeautifulSoup/index.bhtml\">source</a>) is part of Crummy, the webspace of <a href=\"/self/\">Leonard Richardson</a> (<a href=\"/self/contact.html\">contact information</a>). It was last modified on Tuesday, September 29 2015, 00:25:43 Nowhere Standard Time and last built on Wednesday, June 15 2016, 05:00:01 Nowhere Standard Time.</p><p><table class=\"licenseText\"><tr><td><a href=\"http://creativecommons.org/licenses/by-sa/2.0/\"><img border=\"0\" src=\"/nb//resources/img/somerights20.jpg\"></a></td><td valign=\"top\">Crummy is &copy; 1996-2016 Leonard Richardson. Unless otherwise noted, all text licensed under a <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">Creative Commons License</a>.</td></tr></table></span><!--<rdf:RDF xmlns=\"http://web.resource.org/cc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><Work rdf:about=\"http://www.crummy.com/\"><dc:title>Crummy: The Site</dc:title><dc:rights><Agent><dc:title>Crummy: the Site</dc:title></Agent></dc:rights><dc:format>text/html</dc:format><license rdf:resource=http://creativecommons.org/licenses/by-sa/2.0//></Work><License rdf:about=\"http://creativecommons.org/licenses/by-sa/2.0/\"></License></rdf:RDF>--></p></td><td valign=top><p><b>Document tree:</b>\\n<dl><dd><a href=\"http://www.crummy.com/\">http://www.crummy.com/</a><dl><dd><a href=\"http://www.crummy.com/software/\">software/</a><dl><dd><a href=\"http://www.crummy.com/software/BeautifulSoup/\">BeautifulSoup/</a></dl>\\n</dl>\\n</dl>\\n\\n\\nSite Search:\\n\\n<form method=\"get\" action=\"/search/\">\\n        <input type=\"text\" name=\"q\" maxlength=\"255\" value=\"\"></input>\\n        </form>\\n        </td>\\n\\n</tr>\\n\\n</table>\\n</body>\\n</html>\\n'\n"
+     ]
+    }
+   ],
+   "source": [
+    "url ='https://www.crummy.com/software/BeautifulSoup/'\n",
+    "source = urllib.request.urlopen(url).read()\n",
+    "print (source)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "print('Alice' in source)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 58,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "False\n"
+     ]
+    }
+   ],
+   "source": [
+    "print (b'Alice' in source)\n",
+    "##is 'Alice' in source?\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "41\n"
+     ]
+    }
+   ],
+   "source": [
+    "print (source.count(b'Soup'))\n",
+    "## count occurences of 'Soup'"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 38,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "1639\n"
+     ]
+    }
+   ],
+   "source": [
+    "## Index of alien video games\n",
+    "\n",
+    "position = source.find(b'alien video games')\n",
+    "print(position)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 46,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "b'alien video games</a'\n"
+     ]
+    }
+   ],
+   "source": [
+    "## quick test to see the substring in the source variable\n",
+    "## you can access strings like lists\n",
+    "\n",
+    "print (source[position:position+20])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 47,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "b'alien video games'\n"
+     ]
+    }
+   ],
+   "source": [
+    "## or the tidier version:\n",
+    "print (source[position:position + len('alien video games')])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 70,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "soup = bs4.BeautifulSoup(source,'html.parser') ## get bs4 object"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 71,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\"\n",
+      "\"http://www.w3.org/TR/REC-html40/transitional.dtd\">\n",
+      "<html>\n",
+      " <head>\n",
+      "  <meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\">\n",
+      "   <title>\n",
+      "    Beautiful Soup: We called him Tortoise because he taught us.\n",
+      "   </title>\n",
+      "   <link href=\"mailto:leonardr@segfault.org\" rev=\"made\">\n",
+      "    <link href=\"/nb/themes/Default/nb.css\" rel=\"stylesheet\" type=\"text/css\">\n",
+      "     <meta content=\"Beautiful Soup: a library designed for screen-scraping HTML and XML.\" name=\"Description\">\n",
+      "      <meta content=\"Markov Approximation 1.4 (module: leonardr)\" name=\"generator\">\n",
+      "       <meta content=\"Leonard Richardson\" name=\"author\">\n",
+      "       </meta>\n",
+      "      </meta>\n",
+      "     </meta>\n",
+      "    </link>\n",
+      "   </link>\n",
+      "  </meta>\n",
+      " </head>\n",
+      " <body alink=\"red\" bgcolor=\"white\" link=\"blue\" text=\"black\" vlink=\"660066\">\n",
+      "  <img align=\"right\" src=\"10.1.jpg\" width=\"250\">\n",
+      "   <br/>\n",
+      "   <p>\n",
+      "    You didn't write that awful page. You're just trying to get some\n",
+      "data out of it. Beautiful Soup is here to help. Since 2004, it's been\n",
+      "saving programmers hours or days of work on quick-turnaround\n",
+      "screen scraping projects.\n",
+      "   </p>\n",
+      "   <div align=\"center\">\n",
+      "    <a href=\"bs4/download/\">\n",
+      "     <h1>\n",
+      "      Beautiful Soup\n",
+      "     </h1>\n",
+      "    </a>\n",
+      "    <p>\n",
+      "     \"A tremendous boon.\" -- Python411 Podcast\n",
+      "    </p>\n",
+      "    <p>\n",
+      "     [\n",
+      "     <a href=\"#Download\">\n",
+      "      Download\n",
+      "     </a>\n",
+      "     |\n",
+      "     <a href=\"bs4/doc/\">\n",
+      "      Documentation\n",
+      "     </a>\n",
+      "     |\n",
+      "     <a href=\"#HallOfFame\">\n",
+      "      Hall of Fame\n",
+      "     </a>\n",
+      "     |\n",
+      "     <a href=\"https://code.launchpad.net/beautifulsoup\">\n",
+      "      Source\n",
+      "     </a>\n",
+      "     |\n",
+      "     <a href=\"https://groups.google.com/forum/?fromgroups#!forum/beautifulsoup\">\n",
+      "      Discussion group\n",
+      "     </a>\n",
+      "     ]\n",
+      "    </p>\n",
+      "    <small>\n",
+      "     If Beautiful Soup has saved you a lot of time and money, the\n",
+      "best way to pay me back is to check out\n",
+      "     <a href=\"http://www.candlemarkandgleam.com/shop/constellation-games/\">\n",
+      "      <i>\n",
+      "       Constellation\n",
+      "Games\n",
+      "      </i>\n",
+      "      , my sci-fi novel about alien video games\n",
+      "     </a>\n",
+      "     .\n",
+      "     <br/>\n",
+      "     You can\n",
+      "     <a href=\"http://constellation.crummy.com/Constellation%20Games%20excerpt.html\">\n",
+      "      read\n",
+      "the first two chapters for free\n",
+      "     </a>\n",
+      "     , and the full novel starts at 5\n",
+      "USD. Thanks!\n",
+      "    </small>\n",
+      "   </div>\n",
+      "   <p>\n",
+      "    <i>\n",
+      "     If you have questions, send them to\n",
+      "     <a href=\"https://groups.google.com/forum/?fromgroups#!forum/beautifulsoup\">\n",
+      "      the discussion\n",
+      "group\n",
+      "     </a>\n",
+      "     . If you find a bug,\n",
+      "     <a href=\"https://bugs.launchpad.net/beautifulsoup/\">\n",
+      "      file it\n",
+      "     </a>\n",
+      "     .\n",
+      "    </i>\n",
+      "   </p>\n",
+      "   <p>\n",
+      "    Beautiful Soup is a Python library designed for quick turnaround\n",
+      "projects like screen-scraping. Three features make it powerful:\n",
+      "    <ol>\n",
+      "     <li>\n",
+      "      Beautiful Soup provides a few simple methods and Pythonic idioms\n",
+      "for navigating, searching, and modifying a parse tree: a toolkit for\n",
+      "dissecting a document and extracting what you need. It doesn't take\n",
+      "much code to write an application\n",
+      "      <li>\n",
+      "       Beautiful Soup automatically converts incoming documents to\n",
+      "Unicode and outgoing documents to UTF-8. You don't have to think\n",
+      "about encodings, unless the document doesn't specify an encoding and\n",
+      "Beautiful Soup can't detect one. Then you just have to specify the\n",
+      "original encoding.\n",
+      "       <li>\n",
+      "        Beautiful Soup sits on top of popular Python parsers like\n",
+      "        <a href=\"http://lxml.de/\">\n",
+      "         lxml\n",
+      "        </a>\n",
+      "        and\n",
+      "        <a href=\"http://code.google.com/p/html5lib/\">\n",
+      "         html5lib\n",
+      "        </a>\n",
+      "        , allowing you\n",
+      "to try out different parsing strategies or trade speed for\n",
+      "flexibility.\n",
+      "       </li>\n",
+      "      </li>\n",
+      "     </li>\n",
+      "    </ol>\n",
+      "    <p>\n",
+      "     Beautiful Soup parses anything you give it, and does the tree\n",
+      "traversal stuff for you. You can tell it \"Find all the links\", or\n",
+      "\"Find all the links of class\n",
+      "     <tt>\n",
+      "      externalLink\n",
+      "     </tt>\n",
+      "     \", or \"Find all the\n",
+      "links whose urls match \"foo.com\", or \"Find the table heading that's\n",
+      "got bold text, then give me that text.\"\n",
+      "     <p>\n",
+      "      Valuable data that was once locked up in poorly-designed websites\n",
+      "is now within your reach. Projects that would have taken hours take\n",
+      "only minutes with Beautiful Soup.\n",
+      "      <p>\n",
+      "       Interested?\n",
+      "       <a href=\"bs4/doc/\">\n",
+      "        Read more.\n",
+      "       </a>\n",
+      "       <a name=\"Download\">\n",
+      "        <h2>\n",
+      "         Download Beautiful Soup\n",
+      "        </h2>\n",
+      "       </a>\n",
+      "       <p>\n",
+      "        The current release is\n",
+      "        <a href=\"bs4/download/\">\n",
+      "         Beautiful Soup\n",
+      "4.4.1\n",
+      "        </a>\n",
+      "        (September 28, 2015). You can install Beautiful Soup 4 with\n",
+      "        <code>\n",
+      "         pip install beautifulsoup4\n",
+      "        </code>\n",
+      "        . It's also available as the\n",
+      "        <code>\n",
+      "         python-beautifulsoup4\n",
+      "        </code>\n",
+      "        package in Debian, Ubuntu, and\n",
+      "Fedora.\n",
+      "        <p>\n",
+      "         Beautiful Soup 4 works on both Python 2 (2.6+) and Python 3.\n",
+      "         <p>\n",
+      "          Beautiful Soup is licensed under the MIT license, so you can also\n",
+      "download the tarball, drop the\n",
+      "          <code>\n",
+      "           bs4/\n",
+      "          </code>\n",
+      "          directory into almost\n",
+      "any Python application (or into your library path) and start using it\n",
+      "immediately. (If you want to do this under Python 3, you will need to\n",
+      "manually convert the code using\n",
+      "          <code>\n",
+      "           2to3\n",
+      "          </code>\n",
+      "          .)\n",
+      "          <h3>\n",
+      "           Beautiful Soup 3\n",
+      "          </h3>\n",
+      "          <p>\n",
+      "           Beautiful Soup 3 was the official release line of Beautiful Soup\n",
+      "from May 2006 to March 2012. It is considered stable, and only\n",
+      "critical security bugs will be fixed.\n",
+      "           <a href=\"http://www.crummy.com/software/BeautifulSoup/bs3/documentation.html\">\n",
+      "            Here's\n",
+      "the Beautiful Soup 3 documentation.\n",
+      "           </a>\n",
+      "           <p>\n",
+      "            Beautiful Soup 3 works only under Python 2.x. It is licensed under\n",
+      "the same license as Python itself.\n",
+      "            <p>\n",
+      "             The current release of Beautiful Soup 3 is\n",
+      "             <a href=\"download/3.x/BeautifulSoup-3.2.1.tar.gz\">\n",
+      "              3.2.1\n",
+      "             </a>\n",
+      "             (February 16,\n",
+      "2012). You can install Beautiful Soup 3 with\n",
+      "             <code>\n",
+      "              pip install\n",
+      "BeautifulSoup\n",
+      "             </code>\n",
+      "             . It's also available as\n",
+      "             <code>\n",
+      "              python-beautifulsoup\n",
+      "             </code>\n",
+      "             in Debian and Ubuntu, and as\n",
+      "             <code>\n",
+      "              python-BeautifulSoup\n",
+      "             </code>\n",
+      "             in Fedora.\n",
+      "             <p>\n",
+      "              You can also download the tarball and use\n",
+      "              <code>\n",
+      "               BeautifulSoup.py\n",
+      "              </code>\n",
+      "              in your project directly.\n",
+      "              <a name=\"HallOfFame\">\n",
+      "               <h2>\n",
+      "                Hall of Fame\n",
+      "               </h2>\n",
+      "              </a>\n",
+      "              <p>\n",
+      "               Over the years, Beautiful Soup has been used in hundreds of\n",
+      "different projects. There's no way I can list them all, but I want to\n",
+      "highlight a few high-profile projects. Beautiful Soup isn't what makes\n",
+      "these projects interesting, but it did make their completion easier:\n",
+      "               <ul>\n",
+      "                <li>\n",
+      "                 <a href=\"http://www.nytimes.com/2007/10/25/arts/design/25vide.html\">\n",
+      "                  \"Movable\n",
+      " Type\"\n",
+      "                 </a>\n",
+      "                 , a work of digital art on display in the lobby of the New\n",
+      " York Times building, uses Beautiful Soup to scrape news feeds.\n",
+      "                 <li>\n",
+      "                  Reddit uses Beautiful Soup to\n",
+      "                  <a href=\"https://github.com/reddit/reddit/blob/85f9cff3e2ab9bb8f19b96acd8da4ebacc079f04/r2/r2/lib/media.py\">\n",
+      "                   parse\n",
+      "a page that's been linked to and find a representative image\n",
+      "                  </a>\n",
+      "                  .\n",
+      "                  <li>\n",
+      "                   Alexander Harrowell uses Beautiful Soup to\n",
+      "                   <a href=\"http://www.harrowell.org.uk/viktormap.html\">\n",
+      "                    track the business\n",
+      " activities\n",
+      "                   </a>\n",
+      "                   of an arms merchant.\n",
+      "                   <li>\n",
+      "                    The developers of Python itself used Beautiful Soup to\n",
+      "                    <a href=\"http://svn.python.org/view/tracker/importer/\">\n",
+      "                     migrate the Python\n",
+      "bug tracker from Sourceforge to Roundup\n",
+      "                    </a>\n",
+      "                    .\n",
+      "                    <li>\n",
+      "                     The\n",
+      "                     <a href=\"http://www2.ljworld.com/\">\n",
+      "                      Lawrence Journal-World\n",
+      "                     </a>\n",
+      "                     uses Beautiful Soup to\n",
+      "                     <a href=\"http://www.b-list.org/weblog/2010/nov/02/news-done-broke/\">\n",
+      "                      gather\n",
+      "statewide election results\n",
+      "                     </a>\n",
+      "                     .\n",
+      "                     <li>\n",
+      "                      The\n",
+      "                      <a href=\"http://esrl.noaa.gov/gsd/fab/\">\n",
+      "                       NOAA's Forecast\n",
+      "Applications Branch\n",
+      "                      </a>\n",
+      "                      uses Beautiful Soup in\n",
+      "                      <a href=\"http://laps.noaa.gov/topograbber/\">\n",
+      "                       TopoGrabber\n",
+      "                      </a>\n",
+      "                      , a script for\n",
+      "downloading \"high resolution USGS datasets.\"\n",
+      "                     </li>\n",
+      "                    </li>\n",
+      "                   </li>\n",
+      "                  </li>\n",
+      "                 </li>\n",
+      "                </li>\n",
+      "               </ul>\n",
+      "               <p>\n",
+      "                If you've used Beautiful Soup in a project you'd like me to know\n",
+      "about, please do send email to me or\n",
+      "                <a href=\"http://groups.google.com/group/beautifulsoup/\">\n",
+      "                 the discussion\n",
+      "group\n",
+      "                </a>\n",
+      "                .\n",
+      "                <h2>\n",
+      "                 Development\n",
+      "                </h2>\n",
+      "                <p>\n",
+      "                 Development happens at\n",
+      "                 <a href=\"https://launchpad.net/beautifulsoup\">\n",
+      "                  Launchpad\n",
+      "                 </a>\n",
+      "                 . You can\n",
+      "                 <a href=\"https://code.launchpad.net/beautifulsoup/\">\n",
+      "                  get the source\n",
+      "code\n",
+      "                 </a>\n",
+      "                 or\n",
+      "                 <a href=\"https://bugs.launchpad.net/beautifulsoup/\">\n",
+      "                  file\n",
+      "bugs\n",
+      "                 </a>\n",
+      "                 .\n",
+      "                 <hr>\n",
+      "                  <table>\n",
+      "                   <tr>\n",
+      "                    <td valign=\"top\">\n",
+      "                     <p>\n",
+      "                      This document (\n",
+      "                      <a href=\"/source/software/BeautifulSoup/index.bhtml\">\n",
+      "                       source\n",
+      "                      </a>\n",
+      "                      ) is part of Crummy, the webspace of\n",
+      "                      <a href=\"/self/\">\n",
+      "                       Leonard Richardson\n",
+      "                      </a>\n",
+      "                      (\n",
+      "                      <a href=\"/self/contact.html\">\n",
+      "                       contact information\n",
+      "                      </a>\n",
+      "                      ). It was last modified on Tuesday, September 29 2015, 00:25:43 Nowhere Standard Time and last built on Wednesday, June 15 2016, 05:00:01 Nowhere Standard Time.\n",
+      "                     </p>\n",
+      "                     <p>\n",
+      "                      <table class=\"licenseText\">\n",
+      "                       <tr>\n",
+      "                        <td>\n",
+      "                         <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">\n",
+      "                          <img border=\"0\" src=\"/nb//resources/img/somerights20.jpg\"/>\n",
+      "                         </a>\n",
+      "                        </td>\n",
+      "                        <td valign=\"top\">\n",
+      "                         Crummy is © 1996-2016 Leonard Richardson. Unless otherwise noted, all text licensed under a\n",
+      "                         <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">\n",
+      "                          Creative Commons License\n",
+      "                         </a>\n",
+      "                         .\n",
+      "                        </td>\n",
+      "                       </tr>\n",
+      "                      </table>\n",
+      "                     </p>\n",
+      "                    </td>\n",
+      "                   </tr>\n",
+      "                  </table>\n",
+      "                 </hr>\n",
+      "                </p>\n",
+      "               </p>\n",
+      "              </p>\n",
+      "             </p>\n",
+      "            </p>\n",
+      "           </p>\n",
+      "          </p>\n",
+      "         </p>\n",
+      "        </p>\n",
+      "       </p>\n",
+      "      </p>\n",
+      "     </p>\n",
+      "    </p>\n",
+      "   </p>\n",
+      "  </img>\n",
+      " </body>\n",
+      "</html>\n",
+      "<!--<rdf:RDF xmlns=\"http://web.resource.org/cc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><Work rdf:about=\"http://www.crummy.com/\"><dc:title>Crummy: The Site</dc:title><dc:rights><Agent><dc:title>Crummy: the Site</dc:title></Agent></dc:rights><dc:format>text/html</dc:format><license rdf:resource=http://creativecommons.org/licenses/by-sa/2.0//></Work><License rdf:about=\"http://creativecommons.org/licenses/by-sa/2.0/\"></License></rdf:RDF>-->\n",
+      "<td valign=\"top\">\n",
+      " <p>\n",
+      "  <b>\n",
+      "   Document tree:\n",
+      "  </b>\n",
+      "  <dl>\n",
+      "   <dd>\n",
+      "    <a href=\"http://www.crummy.com/\">\n",
+      "     http://www.crummy.com/\n",
+      "    </a>\n",
+      "    <dl>\n",
+      "     <dd>\n",
+      "      <a href=\"http://www.crummy.com/software/\">\n",
+      "       software/\n",
+      "      </a>\n",
+      "      <dl>\n",
+      "       <dd>\n",
+      "        <a href=\"http://www.crummy.com/software/BeautifulSoup/\">\n",
+      "         BeautifulSoup/\n",
+      "        </a>\n",
+      "       </dd>\n",
+      "      </dl>\n",
+      "     </dd>\n",
+      "    </dl>\n",
+      "   </dd>\n",
+      "  </dl>\n",
+      "  Site Search:\n",
+      "  <form action=\"/search/\" method=\"get\">\n",
+      "   <input maxlength=\"255\" name=\"q\" type=\"text\" value=\"\"/>\n",
+      "  </form>\n",
+      " </p>\n",
+      "</td>\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(soup.prettify()) ## Formats the output to show different levels of the HTML code."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 72,
+   "metadata": {
+    "collapsed": false,
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<title>Beautiful Soup: We called him Tortoise because he taught us.</title>"
+      ]
+     },
+     "execution_count": 72,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "soup.title"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 73,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<bound method Tag.find of <title>Beautiful Soup: We called him Tortoise because he taught us.</title>>"
+      ]
+     },
+     "execution_count": 73,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "soup.title.find"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 74,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'Beautiful Soup: We called him Tortoise because he taught us.'"
+      ]
+     },
+     "execution_count": 74,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "soup.title.string"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 75,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'meta'"
+      ]
+     },
+     "execution_count": 75,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "soup.title.parent.name"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 76,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<p>You didn't write that awful page. You're just trying to get some\n",
+       "data out of it. Beautiful Soup is here to help. Since 2004, it's been\n",
+       "saving programmers hours or days of work on quick-turnaround\n",
+       "screen scraping projects.</p>"
+      ]
+     },
+     "execution_count": 76,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "soup.p"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 82,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<a href=\"bs4/download/\"><h1>Beautiful Soup</h1></a>"
+      ]
+     },
+     "execution_count": 82,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "soup.a"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 83,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[<a href=\"bs4/download/\"><h1>Beautiful Soup</h1></a>,\n",
+       " <a href=\"#Download\">Download</a>,\n",
+       " <a href=\"bs4/doc/\">Documentation</a>,\n",
+       " <a href=\"#HallOfFame\">Hall of Fame</a>,\n",
+       " <a href=\"https://code.launchpad.net/beautifulsoup\">Source</a>,\n",
+       " <a href=\"https://groups.google.com/forum/?fromgroups#!forum/beautifulsoup\">Discussion group</a>,\n",
+       " <a href=\"http://www.candlemarkandgleam.com/shop/constellation-games/\"><i>Constellation\n",
+       " Games</i>, my sci-fi novel about alien video games</a>,\n",
+       " <a href=\"http://constellation.crummy.com/Constellation%20Games%20excerpt.html\">read\n",
+       " the first two chapters for free</a>,\n",
+       " <a href=\"https://groups.google.com/forum/?fromgroups#!forum/beautifulsoup\">the discussion\n",
+       " group</a>,\n",
+       " <a href=\"https://bugs.launchpad.net/beautifulsoup/\">file it</a>,\n",
+       " <a href=\"http://lxml.de/\">lxml</a>,\n",
+       " <a href=\"http://code.google.com/p/html5lib/\">html5lib</a>,\n",
+       " <a href=\"bs4/doc/\">Read more.</a>,\n",
+       " <a name=\"Download\"><h2>Download Beautiful Soup</h2></a>,\n",
+       " <a href=\"bs4/download/\">Beautiful Soup\n",
+       " 4.4.1</a>,\n",
+       " <a href=\"http://www.crummy.com/software/BeautifulSoup/bs3/documentation.html\">Here's\n",
+       " the Beautiful Soup 3 documentation.</a>,\n",
+       " <a href=\"download/3.x/BeautifulSoup-3.2.1.tar.gz\">3.2.1</a>,\n",
+       " <a name=\"HallOfFame\"><h2>Hall of Fame</h2></a>,\n",
+       " <a href=\"http://www.nytimes.com/2007/10/25/arts/design/25vide.html\">\"Movable\n",
+       "  Type\"</a>,\n",
+       " <a href=\"https://github.com/reddit/reddit/blob/85f9cff3e2ab9bb8f19b96acd8da4ebacc079f04/r2/r2/lib/media.py\">parse\n",
+       " a page that's been linked to and find a representative image</a>,\n",
+       " <a href=\"http://www.harrowell.org.uk/viktormap.html\">track the business\n",
+       "  activities</a>,\n",
+       " <a href=\"http://svn.python.org/view/tracker/importer/\">migrate the Python\n",
+       " bug tracker from Sourceforge to Roundup</a>,\n",
+       " <a href=\"http://www2.ljworld.com/\">Lawrence Journal-World</a>,\n",
+       " <a href=\"http://www.b-list.org/weblog/2010/nov/02/news-done-broke/\">gather\n",
+       " statewide election results</a>,\n",
+       " <a href=\"http://esrl.noaa.gov/gsd/fab/\">NOAA's Forecast\n",
+       " Applications Branch</a>,\n",
+       " <a href=\"http://laps.noaa.gov/topograbber/\">TopoGrabber</a>,\n",
+       " <a href=\"http://groups.google.com/group/beautifulsoup/\">the discussion\n",
+       " group</a>,\n",
+       " <a href=\"https://launchpad.net/beautifulsoup\">Launchpad</a>,\n",
+       " <a href=\"https://code.launchpad.net/beautifulsoup/\">get the source\n",
+       " code</a>,\n",
+       " <a href=\"https://bugs.launchpad.net/beautifulsoup/\">file\n",
+       " bugs</a>,\n",
+       " <a href=\"/source/software/BeautifulSoup/index.bhtml\">source</a>,\n",
+       " <a href=\"/self/\">Leonard Richardson</a>,\n",
+       " <a href=\"/self/contact.html\">contact information</a>,\n",
+       " <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\"><img border=\"0\" src=\"/nb//resources/img/somerights20.jpg\"/></a>,\n",
+       " <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">Creative Commons License</a>,\n",
+       " <a href=\"http://www.crummy.com/\">http://www.crummy.com/</a>,\n",
+       " <a href=\"http://www.crummy.com/software/\">software/</a>,\n",
+       " <a href=\"http://www.crummy.com/software/BeautifulSoup/\">BeautifulSoup/</a>]"
+      ]
+     },
+     "execution_count": 83,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "soup.findAll('a')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 107,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "bs4/download/\n",
+      "#Download\n",
+      "bs4/doc/\n",
+      "#HallOfFame\n",
+      "https://code.launchpad.net/beautifulsoup\n",
+      "https://groups.google.com/forum/?fromgroups#!forum/beautifulsoup\n",
+      "http://www.candlemarkandgleam.com/shop/constellation-games/\n",
+      "http://constellation.crummy.com/Constellation%20Games%20excerpt.html\n",
+      "https://groups.google.com/forum/?fromgroups#!forum/beautifulsoup\n",
+      "https://bugs.launchpad.net/beautifulsoup/\n",
+      "http://lxml.de/\n",
+      "http://code.google.com/p/html5lib/\n",
+      "bs4/doc/\n",
+      "None\n",
+      "bs4/download/\n",
+      "http://www.crummy.com/software/BeautifulSoup/bs3/documentation.html\n",
+      "download/3.x/BeautifulSoup-3.2.1.tar.gz\n",
+      "None\n",
+      "http://www.nytimes.com/2007/10/25/arts/design/25vide.html\n",
+      "https://github.com/reddit/reddit/blob/85f9cff3e2ab9bb8f19b96acd8da4ebacc079f04/r2/r2/lib/media.py\n",
+      "http://www.harrowell.org.uk/viktormap.html\n",
+      "http://svn.python.org/view/tracker/importer/\n",
+      "http://www2.ljworld.com/\n",
+      "http://www.b-list.org/weblog/2010/nov/02/news-done-broke/\n",
+      "http://esrl.noaa.gov/gsd/fab/\n",
+      "http://laps.noaa.gov/topograbber/\n",
+      "http://groups.google.com/group/beautifulsoup/\n",
+      "https://launchpad.net/beautifulsoup\n",
+      "https://code.launchpad.net/beautifulsoup/\n",
+      "https://bugs.launchpad.net/beautifulsoup/\n",
+      "/source/software/BeautifulSoup/index.bhtml\n",
+      "/self/\n",
+      "/self/contact.html\n",
+      "http://creativecommons.org/licenses/by-sa/2.0/\n",
+      "http://creativecommons.org/licenses/by-sa/2.0/\n",
+      "http://www.crummy.com/\n",
+      "http://www.crummy.com/software/\n",
+      "http://www.crummy.com/software/BeautifulSoup/\n"
+     ]
+    }
+   ],
+   "source": [
+    "#One common task is extracting all the URLs found within a page’s <a> tags:\n",
+    "for link in soup.findAll('a'):\n",
+    "    link_list = link.get('href')\n",
+    "    print (link_list)\n",
+    "   \n",
+    "#print (link.get('href'))\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 95,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\n",
+      "\n",
+      "\n",
+      "\n",
+      "Beautiful Soup: We called him Tortoise because he taught us.\n",
+      "\n",
+      "\n",
+      "\n",
+      "\n",
+      "\n",
+      "\n",
+      "\n",
+      "\n",
+      "You didn't write that awful page. You're just trying to get some\n",
+      "data out of it. Beautiful Soup is here to help. Since 2004, it's been\n",
+      "saving programmers hours or days of work on quick-turnaround\n",
+      "screen scraping projects.\n",
+      "\n",
+      "Beautiful Soup\n",
+      "\"A tremendous boon.\" -- Python411 Podcast\n",
+      "[ Download | Documentation | Hall of Fame | Source | Discussion group ]\n",
+      "If Beautiful Soup has saved you a lot of time and money, the\n",
+      "best way to pay me back is to check out Constellation\n",
+      "Games, my sci-fi novel about alien video games.You can\n",
+      "read\n",
+      "the first two chapters for free, and the full novel starts at 5\n",
+      "USD. Thanks! \n",
+      "If you have questions, send them to the discussion\n",
+      "group. If you find a bug, file it.\n",
+      "Beautiful Soup is a Python library designed for quick turnaround\n",
+      "projects like screen-scraping. Three features make it powerful:\n",
+      "\n",
+      "\n",
+      "Beautiful Soup provides a few simple methods and Pythonic idioms\n",
+      "for navigating, searching, and modifying a parse tree: a toolkit for\n",
+      "dissecting a document and extracting what you need. It doesn't take\n",
+      "much code to write an application\n",
+      "\n",
+      "Beautiful Soup automatically converts incoming documents to\n",
+      "Unicode and outgoing documents to UTF-8. You don't have to think\n",
+      "about encodings, unless the document doesn't specify an encoding and\n",
+      "Beautiful Soup can't detect one. Then you just have to specify the\n",
+      "original encoding.\n",
+      "\n",
+      "Beautiful Soup sits on top of popular Python parsers like lxml and html5lib, allowing you\n",
+      "to try out different parsing strategies or trade speed for\n",
+      "flexibility.\n",
+      "\n",
+      "\n",
+      "Beautiful Soup parses anything you give it, and does the tree\n",
+      "traversal stuff for you. You can tell it \"Find all the links\", or\n",
+      "\"Find all the links of class externalLink\", or \"Find all the\n",
+      "links whose urls match \"foo.com\", or \"Find the table heading that's\n",
+      "got bold text, then give me that text.\"\n",
+      "\n",
+      "Valuable data that was once locked up in poorly-designed websites\n",
+      "is now within your reach. Projects that would have taken hours take\n",
+      "only minutes with Beautiful Soup.\n",
+      "\n",
+      "Interested? Read more.\n",
+      "Download Beautiful Soup\n",
+      "The current release is Beautiful Soup\n",
+      "4.4.1 (September 28, 2015). You can install Beautiful Soup 4 with\n",
+      "pip install beautifulsoup4. It's also available as the\n",
+      "python-beautifulsoup4 package in Debian, Ubuntu, and\n",
+      "Fedora.\n",
+      "\n",
+      "Beautiful Soup 4 works on both Python 2 (2.6+) and Python 3.\n",
+      "\n",
+      "Beautiful Soup is licensed under the MIT license, so you can also\n",
+      "download the tarball, drop the bs4/ directory into almost\n",
+      "any Python application (or into your library path) and start using it\n",
+      "immediately. (If you want to do this under Python 3, you will need to\n",
+      "manually convert the code using 2to3.)\n",
+      "\n",
+      "Beautiful Soup 3\n",
+      "Beautiful Soup 3 was the official release line of Beautiful Soup\n",
+      "from May 2006 to March 2012. It is considered stable, and only\n",
+      "critical security bugs will be fixed. Here's\n",
+      "the Beautiful Soup 3 documentation.\n",
+      "Beautiful Soup 3 works only under Python 2.x. It is licensed under\n",
+      "the same license as Python itself.\n",
+      "\n",
+      "The current release of Beautiful Soup 3 is 3.2.1 (February 16,\n",
+      "2012). You can install Beautiful Soup 3 with pip install\n",
+      "BeautifulSoup. It's also available as\n",
+      "python-beautifulsoup in Debian and Ubuntu, and as\n",
+      "python-BeautifulSoup in Fedora.\n",
+      "\n",
+      "You can also download the tarball and use\n",
+      "BeautifulSoup.py in your project directly.\n",
+      "\n",
+      "\n",
+      "Hall of Fame\n",
+      "Over the years, Beautiful Soup has been used in hundreds of\n",
+      "different projects. There's no way I can list them all, but I want to\n",
+      "highlight a few high-profile projects. Beautiful Soup isn't what makes\n",
+      "these projects interesting, but it did make their completion easier:\n",
+      "\n",
+      "\n",
+      "\"Movable\n",
+      " Type\", a work of digital art on display in the lobby of the New\n",
+      " York Times building, uses Beautiful Soup to scrape news feeds.\n",
+      "\n",
+      "Reddit uses Beautiful Soup to parse\n",
+      "a page that's been linked to and find a representative image.\n",
+      "\n",
+      "Alexander Harrowell uses Beautiful Soup to track the business\n",
+      " activities of an arms merchant.\n",
+      "\n",
+      "The developers of Python itself used Beautiful Soup to migrate the Python\n",
+      "bug tracker from Sourceforge to Roundup.\n",
+      "\n",
+      "The Lawrence Journal-World\n",
+      "uses Beautiful Soup to gather\n",
+      "statewide election results.\n",
+      "\n",
+      "The NOAA's Forecast\n",
+      "Applications Branch uses Beautiful Soup in TopoGrabber, a script for\n",
+      "downloading \"high resolution USGS datasets.\"\n",
+      "\n",
+      "\n",
+      "If you've used Beautiful Soup in a project you'd like me to know\n",
+      "about, please do send email to me or the discussion\n",
+      "group.\n",
+      "\n",
+      "Development\n",
+      "Development happens at Launchpad. You can get the source\n",
+      "code or file\n",
+      "bugs.\n",
+      "This document (source) is part of Crummy, the webspace of Leonard Richardson (contact information). It was last modified on Tuesday, September 29 2015, 00:25:43 Nowhere Standard Time and last built on Wednesday, June 15 2016, 05:00:01 Nowhere Standard Time.Crummy is © 1996-2016 Leonard Richardson. Unless otherwise noted, all text licensed under a Creative Commons License.Document tree:\n",
+      "http://www.crummy.com/software/BeautifulSoup/\n",
+      "\n",
+      "\n",
+      "\n",
+      "\n",
+      "Site Search:\n",
+      "\n",
+      "\n",
+      "\n",
+      "\n",
+      "\n",
+      "\n",
+      "\n",
+      "\n",
+      "\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "#Another common task is extracting all the text from a page:\n",
+    "\n",
+    "print(soup.get_text())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 100,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[]"
+      ]
+     },
+     "execution_count": 100,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "soup.findAll('Soup')\n",
+    "#This command returns empty list, because soup is not an HTML tag. \n",
+    "#It is just a string that occurs in a webpage."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 108,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'http://www.crummy.com/software/BeautifulSoup/'"
+      ]
+     },
+     "execution_count": 108,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "link_list"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 126,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['bs4/download/',\n",
+       " '#Download',\n",
+       " 'bs4/doc/',\n",
+       " '#HallOfFame',\n",
+       " 'https://code.launchpad.net/beautifulsoup',\n",
+       " 'https://groups.google.com/forum/?fromgroups#!forum/beautifulsoup',\n",
+       " 'http://www.candlemarkandgleam.com/shop/constellation-games/',\n",
+       " 'http://constellation.crummy.com/Constellation%20Games%20excerpt.html',\n",
+       " 'https://groups.google.com/forum/?fromgroups#!forum/beautifulsoup',\n",
+       " 'https://bugs.launchpad.net/beautifulsoup/',\n",
+       " 'http://lxml.de/',\n",
+       " 'http://code.google.com/p/html5lib/',\n",
+       " 'bs4/doc/',\n",
+       " None,\n",
+       " 'bs4/download/',\n",
+       " 'http://www.crummy.com/software/BeautifulSoup/bs3/documentation.html',\n",
+       " 'download/3.x/BeautifulSoup-3.2.1.tar.gz',\n",
+       " None,\n",
+       " 'http://www.nytimes.com/2007/10/25/arts/design/25vide.html',\n",
+       " 'https://github.com/reddit/reddit/blob/85f9cff3e2ab9bb8f19b96acd8da4ebacc079f04/r2/r2/lib/media.py',\n",
+       " 'http://www.harrowell.org.uk/viktormap.html',\n",
+       " 'http://svn.python.org/view/tracker/importer/',\n",
+       " 'http://www2.ljworld.com/',\n",
+       " 'http://www.b-list.org/weblog/2010/nov/02/news-done-broke/',\n",
+       " 'http://esrl.noaa.gov/gsd/fab/',\n",
+       " 'http://laps.noaa.gov/topograbber/',\n",
+       " 'http://groups.google.com/group/beautifulsoup/',\n",
+       " 'https://launchpad.net/beautifulsoup',\n",
+       " 'https://code.launchpad.net/beautifulsoup/',\n",
+       " 'https://bugs.launchpad.net/beautifulsoup/',\n",
+       " '/source/software/BeautifulSoup/index.bhtml',\n",
+       " '/self/',\n",
+       " '/self/contact.html',\n",
+       " 'http://creativecommons.org/licenses/by-sa/2.0/',\n",
+       " 'http://creativecommons.org/licenses/by-sa/2.0/',\n",
+       " 'http://www.crummy.com/',\n",
+       " 'http://www.crummy.com/software/',\n",
+       " 'http://www.crummy.com/software/BeautifulSoup/']"
+      ]
+     },
+     "execution_count": 126,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Alternate\n",
+    "\n",
+    "link_list = [l.get('href') for l in soup.findAll('a')]\n",
+    "link_list"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 127,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "external_links=[] ## Let's filter those objects out in the for loop\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 128,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2\n"
+     ]
+    }
+   ],
+   "source": [
+    "print (sum([l is None for l in link_list]))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 131,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['https://code.launchpad.net/beautifulsoup',\n",
+       " 'https://groups.google.com/forum/?fromgroups#!forum/beautifulsoup',\n",
+       " 'http://www.candlemarkandgleam.com/shop/constellation-games/',\n",
+       " 'http://constellation.crummy.com/Constellation%20Games%20excerpt.html',\n",
+       " 'https://groups.google.com/forum/?fromgroups#!forum/beautifulsoup',\n",
+       " 'https://bugs.launchpad.net/beautifulsoup/',\n",
+       " 'http://lxml.de/',\n",
+       " 'http://code.google.com/p/html5lib/',\n",
+       " 'http://www.crummy.com/software/BeautifulSoup/bs3/documentation.html',\n",
+       " 'http://www.nytimes.com/2007/10/25/arts/design/25vide.html',\n",
+       " 'https://github.com/reddit/reddit/blob/85f9cff3e2ab9bb8f19b96acd8da4ebacc079f04/r2/r2/lib/media.py',\n",
+       " 'http://www.harrowell.org.uk/viktormap.html',\n",
+       " 'http://svn.python.org/view/tracker/importer/',\n",
+       " 'http://www2.ljworld.com/',\n",
+       " 'http://www.b-list.org/weblog/2010/nov/02/news-done-broke/',\n",
+       " 'http://esrl.noaa.gov/gsd/fab/',\n",
+       " 'http://laps.noaa.gov/topograbber/',\n",
+       " 'http://groups.google.com/group/beautifulsoup/',\n",
+       " 'https://launchpad.net/beautifulsoup',\n",
+       " 'https://code.launchpad.net/beautifulsoup/',\n",
+       " 'https://bugs.launchpad.net/beautifulsoup/',\n",
+       " 'http://creativecommons.org/licenses/by-sa/2.0/',\n",
+       " 'http://creativecommons.org/licenses/by-sa/2.0/',\n",
+       " 'http://www.crummy.com/',\n",
+       " 'http://www.crummy.com/software/',\n",
+       " 'http://www.crummy.com/software/BeautifulSoup/']"
+      ]
+     },
+     "execution_count": 131,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "[l for l in link_list if l is not None and l.startswith('http')]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 133,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "s = \"\"\"<!DOCTYPE html><html><head><title>This is a title</title></head><body><h3> Test </h3><p>Hello world!</p></body></html>\"\"\""
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 137,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "tree = bs4.BeautifulSoup(s,'lxml') #Getting bs4 Object."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 138,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "root_node = tree.html ## HTML root node."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 139,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "head = root_node.contents[0] ## get head from root using contents"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 140,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "body = root_node.contents[1] ## get body from root"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 141,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<body><h3> Test </h3><p>Hello world!</p></body>"
+      ]
+     },
+     "execution_count": 141,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "tree.body ## Directly access body"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 142,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<head><title>This is a title</title></head>"
+      ]
+     },
+     "execution_count": 142,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "tree.head ## Access head."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 144,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<html><head><title>This is a title</title></head><body><h3> Test </h3><p>Hello world!</p></body></html>"
+      ]
+     },
+     "execution_count": 144,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "root_node"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 145,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<h3> Test </h3>"
+      ]
+     },
+     "execution_count": 145,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "body.contents[0] ##H3 Tag."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 147,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "entry_point = soup.find('ul')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 149,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "hall_of_fame_list = entry_point.contents[1:]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 150,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "tmp = []\n",
+    "for li in hall_of_fame_list:\n",
+    "    tmp.append(li.contents)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 151,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[[<a href=\"http://www.nytimes.com/2007/10/25/arts/design/25vide.html\">\"Movable\n",
+       "   Type\"</a>,\n",
+       "  ', a work of digital art on display in the lobby of the New\\n York Times building, uses Beautiful Soup to scrape news feeds.\\n\\n',\n",
+       "  <li>Reddit uses Beautiful Soup to <a href=\"https://github.com/reddit/reddit/blob/85f9cff3e2ab9bb8f19b96acd8da4ebacc079f04/r2/r2/lib/media.py\">parse\n",
+       "  a page that's been linked to and find a representative image</a>.\n",
+       "  \n",
+       "  <li>Alexander Harrowell uses Beautiful Soup to <a href=\"http://www.harrowell.org.uk/viktormap.html\">track the business\n",
+       "   activities</a> of an arms merchant.\n",
+       "  \n",
+       "  <li>The developers of Python itself used Beautiful Soup to <a href=\"http://svn.python.org/view/tracker/importer/\">migrate the Python\n",
+       "  bug tracker from Sourceforge to Roundup</a>.\n",
+       "  \n",
+       "  <li>The <a href=\"http://www2.ljworld.com/\">Lawrence Journal-World</a>\n",
+       "  uses Beautiful Soup to <a href=\"http://www.b-list.org/weblog/2010/nov/02/news-done-broke/\">gather\n",
+       "  statewide election results</a>.\n",
+       "  \n",
+       "  <li>The <a href=\"http://esrl.noaa.gov/gsd/fab/\">NOAA's Forecast\n",
+       "  Applications Branch</a> uses Beautiful Soup in <a href=\"http://laps.noaa.gov/topograbber/\">TopoGrabber</a>, a script for\n",
+       "  downloading \"high resolution USGS datasets.\"\n",
+       "  \n",
+       "  </li></li></li></li></li>]]"
+      ]
+     },
+     "execution_count": 151,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "tmp"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 154,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<a href=\"http://www.nytimes.com/2007/10/25/arts/design/25vide.html\">\"Movable\n",
+      " Type\"</a>, a work of digital art on display in the lobby of the New\n",
+      " York Times building, uses Beautiful Soup to scrape news feeds.\n",
+      "\n",
+      "<li>Reddit uses Beautiful Soup to <a href=\"https://github.com/reddit/reddit/blob/85f9cff3e2ab9bb8f19b96acd8da4ebacc079f04/r2/r2/lib/media.py\">parse\n",
+      "a page that's been linked to and find a representative image</a>.\n",
+      "\n",
+      "<li>Alexander Harrowell uses Beautiful Soup to <a href=\"http://www.harrowell.org.uk/viktormap.html\">track the business\n",
+      " activities</a> of an arms merchant.\n",
+      "\n",
+      "<li>The developers of Python itself used Beautiful Soup to <a href=\"http://svn.python.org/view/tracker/importer/\">migrate the Python\n",
+      "bug tracker from Sourceforge to Roundup</a>.\n",
+      "\n",
+      "<li>The <a href=\"http://www2.ljworld.com/\">Lawrence Journal-World</a>\n",
+      "uses Beautiful Soup to <a href=\"http://www.b-list.org/weblog/2010/nov/02/news-done-broke/\">gather\n",
+      "statewide election results</a>.\n",
+      "\n",
+      "<li>The <a href=\"http://esrl.noaa.gov/gsd/fab/\">NOAA's Forecast\n",
+      "Applications Branch</a> uses Beautiful Soup in <a href=\"http://laps.noaa.gov/topograbber/\">TopoGrabber</a>, a script for\n",
+      "downloading \"high resolution USGS datasets.\"\n",
+      "\n",
+      "</li></li></li></li></li>\n"
+     ]
+    }
+   ],
+   "source": [
+    "test = [\"\".join(str(a) for a in sublist) for sublist in tmp]\n",
+    "print ('\\n'.join(test))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 165,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "b'<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\"\\n\"http://www.w3.org/TR/REC-html40/transitional.dtd\">\\n<html>\\n<head>\\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\\n<title>Beautiful Soup: We called him Tortoise because he taught us.</title>\\n<link rev=\"made\" href=\"mailto:leonardr@segfault.org\">\\n<link rel=\"stylesheet\" type=\"text/css\" href=\"/nb/themes/Default/nb.css\">\\n<meta name=\"Description\" content=\"Beautiful Soup: a library designed for screen-scraping HTML and XML.\">\\n<meta name=\"generator\" content=\"Markov Approximation 1.4 (module: leonardr)\">\\n<meta name=\"author\" content=\"Leonard Richardson\">\\n</head>\\n<body bgcolor=\"white\" text=\"black\" link=\"blue\" vlink=\"660066\" alink=\"red\">\\n<img align=\"right\" src=\"10.1.jpg\" width=\"250\"><br />\\n\\n<p>You didn\\'t write that awful page. You\\'re just trying to get some\\ndata out of it. Beautiful Soup is here to help. Since 2004, it\\'s been\\nsaving programmers hours or days of work on quick-turnaround\\nscreen scraping projects.</p>\\n\\n<div align=\"center\">\\n\\n<a href=\"bs4/download/\"><h1>Beautiful Soup</h1></a>\\n\\n<p>\"A tremendous boon.\" -- Python411 Podcast</p>\\n\\n<p>[ <a href=\"#Download\">Download</a> | <a\\nhref=\"bs4/doc/\">Documentation</a> | <a href=\"#HallOfFame\">Hall of Fame</a> | <a href=\"https://code.launchpad.net/beautifulsoup\">Source</a> | <a href=\"https://groups.google.com/forum/?fromgroups#!forum/beautifulsoup\">Discussion group</a> ]</p>\\n\\n<small>If Beautiful Soup has saved you a lot of time and money, the\\nbest way to pay me back is to check out <a\\nhref=\"http://www.candlemarkandgleam.com/shop/constellation-games/\"><i>Constellation\\nGames</i>, my sci-fi novel about alien video games</a>.<br />You can\\n<a\\nhref=\"http://constellation.crummy.com/Constellation%20Games%20excerpt.html\">read\\nthe first two chapters for free</a>, and the full novel starts at 5\\nUSD. Thanks!</small> </div>\\n\\n<p><i>If you have questions, send them to <a\\nhref=\"https://groups.google.com/forum/?fromgroups#!forum/beautifulsoup\">the discussion\\ngroup</a>. If you find a bug, <a href=\"https://bugs.launchpad.net/beautifulsoup/\">file it</a>.</i></p>\\n\\n<p>Beautiful Soup is a Python library designed for quick turnaround\\nprojects like screen-scraping. Three features make it powerful:\\n\\n<ol>\\n\\n<li>Beautiful Soup provides a few simple methods and Pythonic idioms\\nfor navigating, searching, and modifying a parse tree: a toolkit for\\ndissecting a document and extracting what you need. It doesn\\'t take\\nmuch code to write an application\\n\\n<li>Beautiful Soup automatically converts incoming documents to\\nUnicode and outgoing documents to UTF-8. You don\\'t have to think\\nabout encodings, unless the document doesn\\'t specify an encoding and\\nBeautiful Soup can\\'t detect one. Then you just have to specify the\\noriginal encoding.\\n\\n<li>Beautiful Soup sits on top of popular Python parsers like <a\\nhref=\"http://lxml.de/\">lxml</a> and <a\\nhref=\"http://code.google.com/p/html5lib/\">html5lib</a>, allowing you\\nto try out different parsing strategies or trade speed for\\nflexibility.\\n\\n</ol>\\n\\n<p>Beautiful Soup parses anything you give it, and does the tree\\ntraversal stuff for you. You can tell it \"Find all the links\", or\\n\"Find all the links of class <tt>externalLink</tt>\", or \"Find all the\\nlinks whose urls match \"foo.com\", or \"Find the table heading that\\'s\\ngot bold text, then give me that text.\"\\n\\n<p>Valuable data that was once locked up in poorly-designed websites\\nis now within your reach. Projects that would have taken hours take\\nonly minutes with Beautiful Soup.\\n\\n<p>Interested? <a href=\"bs4/doc/\">Read more.</a>\\n\\n<a name=\"Download\"><h2>Download Beautiful Soup</h2></a>\\n\\n<p>The current release is <a href=\"bs4/download/\">Beautiful Soup\\n4.4.1</a> (September 28, 2015). You can install Beautiful Soup 4 with\\n<code>pip install beautifulsoup4</code>. It\\'s also available as the\\n<code>python-beautifulsoup4</code> package in Debian, Ubuntu, and\\nFedora.\\n\\n<p>Beautiful Soup 4 works on both Python 2 (2.6+) and Python 3.\\n\\n<p>Beautiful Soup is licensed under the MIT license, so you can also\\ndownload the tarball, drop the <code>bs4/</code> directory into almost\\nany Python application (or into your library path) and start using it\\nimmediately. (If you want to do this under Python 3, you will need to\\nmanually convert the code using <code>2to3</code>.)\\n\\n<h3>Beautiful Soup 3</h3>\\n\\n<p>Beautiful Soup 3 was the official release line of Beautiful Soup\\nfrom May 2006 to March 2012. It is considered stable, and only\\ncritical security bugs will be fixed. <a\\nhref=\"http://www.crummy.com/software/BeautifulSoup/bs3/documentation.html\">Here\\'s\\nthe Beautiful Soup 3 documentation.</a>\\n\\n<p>Beautiful Soup 3 works only under Python 2.x. It is licensed under\\nthe same license as Python itself.\\n\\n<p>The current release of Beautiful Soup 3 is <a\\nhref=\"download/3.x/BeautifulSoup-3.2.1.tar.gz\">3.2.1</a> (February 16,\\n2012). You can install Beautiful Soup 3 with <code>pip install\\nBeautifulSoup</code>. It\\'s also available as\\n<code>python-beautifulsoup</code> in Debian and Ubuntu, and as\\n<code>python-BeautifulSoup</code> in Fedora.\\n\\n<p>You can also download the tarball and use\\n<code>BeautifulSoup.py</code> in your project directly.\\n\\n\\n<a name=\"HallOfFame\"><h2>Hall of Fame</h2></a>\\n\\n<p>Over the years, Beautiful Soup has been used in hundreds of\\ndifferent projects. There\\'s no way I can list them all, but I want to\\nhighlight a few high-profile projects. Beautiful Soup isn\\'t what makes\\nthese projects interesting, but it did make their completion easier:\\n\\n<ul>\\n\\n<li><a\\n href=\"http://www.nytimes.com/2007/10/25/arts/design/25vide.html\">\"Movable\\n Type\"</a>, a work of digital art on display in the lobby of the New\\n York Times building, uses Beautiful Soup to scrape news feeds.\\n\\n<li>Reddit uses Beautiful Soup to <a\\nhref=\"https://github.com/reddit/reddit/blob/85f9cff3e2ab9bb8f19b96acd8da4ebacc079f04/r2/r2/lib/media.py\">parse\\na page that\\'s been linked to and find a representative image</a>.\\n\\n<li>Alexander Harrowell uses Beautiful Soup to <a\\n href=\"http://www.harrowell.org.uk/viktormap.html\">track the business\\n activities</a> of an arms merchant.\\n\\n<li>The developers of Python itself used Beautiful Soup to <a\\nhref=\"http://svn.python.org/view/tracker/importer/\">migrate the Python\\nbug tracker from Sourceforge to Roundup</a>.\\n\\n<li>The <a href=\"http://www2.ljworld.com/\">Lawrence Journal-World</a>\\nuses Beautiful Soup to <A\\nhref=\"http://www.b-list.org/weblog/2010/nov/02/news-done-broke/\">gather\\nstatewide election results</a>.\\n\\n<li>The <a href=\"http://esrl.noaa.gov/gsd/fab/\">NOAA\\'s Forecast\\nApplications Branch</a> uses Beautiful Soup in <a\\nhref=\"http://laps.noaa.gov/topograbber/\">TopoGrabber</a>, a script for\\ndownloading \"high resolution USGS datasets.\"\\n\\n</ul>\\n\\n<p>If you\\'ve used Beautiful Soup in a project you\\'d like me to know\\nabout, please do send email to me or <a\\nhref=\"http://groups.google.com/group/beautifulsoup/\">the discussion\\ngroup</a>.\\n\\n<h2>Development</h2>\\n\\n<p>Development happens at <a\\nhref=\"https://launchpad.net/beautifulsoup\">Launchpad</a>. You can <a\\nhref=\"https://code.launchpad.net/beautifulsoup/\">get the source\\ncode</a> or <a href=\"https://bugs.launchpad.net/beautifulsoup/\">file\\nbugs</a>.<hr><table><tr><td valign=\"top\">\\n<p>This document (<a href=\"/source/software/BeautifulSoup/index.bhtml\">source</a>) is part of Crummy, the webspace of <a href=\"/self/\">Leonard Richardson</a> (<a href=\"/self/contact.html\">contact information</a>). It was last modified on Tuesday, September 29 2015, 00:25:43 Nowhere Standard Time and last built on Friday, June 17 2016, 04:00:01 Nowhere Standard Time.</p><p><table class=\"licenseText\"><tr><td><a href=\"http://creativecommons.org/licenses/by-sa/2.0/\"><img border=\"0\" src=\"/nb//resources/img/somerights20.jpg\"></a></td><td valign=\"top\">Crummy is &copy; 1996-2016 Leonard Richardson. Unless otherwise noted, all text licensed under a <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">Creative Commons License</a>.</td></tr></table></span><!--<rdf:RDF xmlns=\"http://web.resource.org/cc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><Work rdf:about=\"http://www.crummy.com/\"><dc:title>Crummy: The Site</dc:title><dc:rights><Agent><dc:title>Crummy: the Site</dc:title></Agent></dc:rights><dc:format>text/html</dc:format><license rdf:resource=http://creativecommons.org/licenses/by-sa/2.0//></Work><License rdf:about=\"http://creativecommons.org/licenses/by-sa/2.0/\"></License></rdf:RDF>--></p></td><td valign=top><p><b>Document tree:</b>\\n<dl><dd><a href=\"http://www.crummy.com/\">http://www.crummy.com/</a><dl><dd><a href=\"http://www.crummy.com/software/\">software/</a><dl><dd><a href=\"http://www.crummy.com/software/BeautifulSoup/\">BeautifulSoup/</a></dl>\\n</dl>\\n</dl>\\n\\n\\nSite Search:\\n\\n<form method=\"get\" action=\"/search/\">\\n        <input type=\"text\" name=\"q\" maxlength=\"255\" value=\"\"></input>\\n        </form>\\n        </td>\\n\\n</tr>\\n\\n</table>\\n</body>\\n</html>\\n'"
+      ]
+     },
+     "execution_count": 165,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "### LA Happy hours problem.\n",
+    "stuff_i_like = ['burger','sushi','sweet potato fries','BBQ']\n",
+    "found_happy_hours = []\n",
+    "# First, I'm going to identify the areas of the page I want to look at\n",
+    "urltwo = 'http://www.downtownla.com/3_10_happyHours.asp?action=ALL'\n",
+    "sourcetwo = urllib.request.urlopen(url).read()\n",
+    "tables = bs4.BeautifulSoup(sourcetwo,\"html.parser\")\n",
+    "sourcetwo"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 174,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "from lxml import html"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 175,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "import urllib"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 176,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "source = urllib.request.urlopen(\"http://google.com\").read()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 177,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<Element html at 0x117e88368>"
+      ]
+     },
+     "execution_count": 177,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "html.document_fromstring(source) ### To check if lxml is working properly."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 178,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "tree = html.document_fromstring(source)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 179,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "tree?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 180,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[(<Element style at 0x117e7e688>, None, '/images/nav_logo229.png', 1054),\n",
+       " (<Element link at 0x117e7e638>,\n",
+       "  'href',\n",
+       "  '/images/branding/product/ico/googleg_lodp.ico',\n",
+       "  0),\n",
+       " (<Element a at 0x117e7e6d8>,\n",
+       "  'href',\n",
+       "  'http://www.google.com/imghp?hl=en&tab=wi',\n",
+       "  0),\n",
+       " (<Element a at 0x117e7e5e8>,\n",
+       "  'href',\n",
+       "  'http://maps.google.com/maps?hl=en&tab=wl',\n",
+       "  0),\n",
+       " (<Element a at 0x101c1eb38>,\n",
+       "  'href',\n",
+       "  'https://play.google.com/?hl=en&tab=w8',\n",
+       "  0),\n",
+       " (<Element a at 0x101c1e278>, 'href', 'http://www.youtube.com/?tab=w1', 0),\n",
+       " (<Element a at 0x101c1ec78>,\n",
+       "  'href',\n",
+       "  'http://news.google.com/nwshp?hl=en&tab=wn',\n",
+       "  0),\n",
+       " (<Element a at 0x101c1ec28>,\n",
+       "  'href',\n",
+       "  'https://mail.google.com/mail/?tab=wm',\n",
+       "  0),\n",
+       " (<Element a at 0x101c1e638>, 'href', 'https://drive.google.com/?tab=wo', 0),\n",
+       " (<Element a at 0x101c1ebd8>,\n",
+       "  'href',\n",
+       "  'https://www.google.com/intl/en/options/',\n",
+       "  0),\n",
+       " (<Element a at 0x101c1e958>,\n",
+       "  'href',\n",
+       "  'http://www.google.com/history/optout?hl=en',\n",
+       "  0),\n",
+       " (<Element a at 0x101c1e138>, 'href', '/preferences?hl=en', 0),\n",
+       " (<Element a at 0x101c1e5e8>,\n",
+       "  'href',\n",
+       "  'https://accounts.google.com/ServiceLogin?hl=en&passive=true&continue=http://www.google.com/',\n",
+       "  0),\n",
+       " (<Element img at 0x117ef1188>,\n",
+       "  'src',\n",
+       "  '/images/branding/googlelogo/1x/googlelogo_white_background_color_272x92dp.png',\n",
+       "  0),\n",
+       " (<Element form at 0x117ef1228>, 'action', '/search', 0),\n",
+       " (<Element a at 0x117ef1278>, 'href', '/advanced_search?hl=en&authuser=0', 0),\n",
+       " (<Element a at 0x117ef12c8>, 'href', '/language_tools?hl=en&authuser=0', 0),\n",
+       " (<Element a at 0x117ef13b8>, 'href', '/intl/en/ads/', 0),\n",
+       " (<Element a at 0x117ef1408>, 'href', '/services/', 0),\n",
+       " (<Element a at 0x117ef1458>,\n",
+       "  'href',\n",
+       "  'https://plus.google.com/116899029375914044550',\n",
+       "  0),\n",
+       " (<Element a at 0x117ef14f8>, 'href', '/intl/en/about.html', 0),\n",
+       " (<Element a at 0x117ef1638>, 'href', '/intl/en/policies/privacy/', 0),\n",
+       " (<Element a at 0x117ef1688>, 'href', '/intl/en/policies/terms/', 0)]"
+      ]
+     },
+     "execution_count": 180,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "[l for l in tree.iterlinks()]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 181,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[<Element head at 0x117e7e548>,\n",
+       " <Element meta at 0x117e7e408>,\n",
+       " <Element meta at 0x117ef1818>,\n",
+       " <Element meta at 0x117ef1728>,\n",
+       " <Element meta at 0x117ef18b8>,\n",
+       " <Element title at 0x117ef1908>,\n",
+       " <Element script at 0x117ef1958>,\n",
+       " <Element style at 0x117ef19a8>,\n",
+       " <Element style at 0x117e7e688>,\n",
+       " <Element script at 0x117ef19f8>,\n",
+       " <Element link at 0x117e7e638>,\n",
+       " <Element body at 0x117ef1a48>,\n",
+       " <Element script at 0x117ef1a98>,\n",
+       " <Element div at 0x117ef1ae8>,\n",
+       " <Element div at 0x117ef1b38>,\n",
+       " <Element nobr at 0x117ef1b88>,\n",
+       " <Element b at 0x117ef1bd8>,\n",
+       " <Element a at 0x117e7e6d8>,\n",
+       " <Element a at 0x117e7e5e8>,\n",
+       " <Element a at 0x101c1eb38>,\n",
+       " <Element a at 0x101c1e278>,\n",
+       " <Element a at 0x101c1ec78>,\n",
+       " <Element a at 0x101c1ec28>,\n",
+       " <Element a at 0x101c1e638>,\n",
+       " <Element a at 0x101c1ebd8>,\n",
+       " <Element u at 0x117ef1c28>,\n",
+       " <Element div at 0x117ef1c78>,\n",
+       " <Element nobr at 0x117ef1cc8>,\n",
+       " <Element span at 0x117ef1d18>,\n",
+       " <Element span at 0x117ef1d68>,\n",
+       " <Element span at 0x117ef1db8>,\n",
+       " <Element a at 0x101c1e958>,\n",
+       " <Element a at 0x101c1e138>,\n",
+       " <Element a at 0x101c1e5e8>,\n",
+       " <Element div at 0x117ef1e08>,\n",
+       " <Element div at 0x117ef1e58>,\n",
+       " <Element center at 0x117ef1ea8>,\n",
+       " <Element br at 0x117ef1ef8>,\n",
+       " <Element div at 0x117ef1f48>,\n",
+       " <Element img at 0x117ef1188>,\n",
+       " <Element br at 0x117ef1f98>,\n",
+       " <Element br at 0x117ef3048>,\n",
+       " <Element form at 0x117ef1228>,\n",
+       " <Element table at 0x117ef3098>,\n",
+       " <Element tr at 0x117ef30e8>,\n",
+       " <Element td at 0x117ef3138>,\n",
+       " <Element td at 0x117ef3188>,\n",
+       " <InputElement 117ef31d8 name='ie' type='hidden'>,\n",
+       " <InputElement 117ef3228 name='hl' type='hidden'>,\n",
+       " <InputElement 117ef3278 name='source' type='hidden'>,\n",
+       " <InputElement 117ef32c8 name='biw' type='hidden'>,\n",
+       " <InputElement 117ef3318 name='bih' type='hidden'>,\n",
+       " <Element div at 0x117ef3368>,\n",
+       " <InputElement 117ef33b8 name='q' type='text'>,\n",
+       " <Element br at 0x117ef3408>,\n",
+       " <Element span at 0x117ef3458>,\n",
+       " <Element span at 0x117ef34a8>,\n",
+       " <InputElement 117ef34f8 name='btnG' type='submit'>,\n",
+       " <Element span at 0x117ef3548>,\n",
+       " <Element span at 0x117ef3598>,\n",
+       " <InputElement 117ef35e8 name='btnI' type='submit'>,\n",
+       " <Element td at 0x117ef3638>,\n",
+       " <Element a at 0x117ef1278>,\n",
+       " <Element a at 0x117ef12c8>,\n",
+       " <InputElement 117ef3688 name='gbv' type='hidden'>,\n",
+       " <Element div at 0x117ef36d8>,\n",
+       " <Element div at 0x117ef3728>,\n",
+       " <Element br at 0x117ef3778>,\n",
+       " <Element span at 0x117ef37c8>,\n",
+       " <Element div at 0x117ef3818>,\n",
+       " <Element div at 0x117ef3868>,\n",
+       " <Element a at 0x117ef13b8>,\n",
+       " <Element a at 0x117ef1408>,\n",
+       " <Element a at 0x117ef1458>,\n",
+       " <Element a at 0x117ef14f8>,\n",
+       " <Element p at 0x117ef38b8>,\n",
+       " <Element a at 0x117ef1638>,\n",
+       " <Element a at 0x117ef1688>,\n",
+       " <Element script at 0x117ef3908>,\n",
+       " <Element div at 0x117ef3958>,\n",
+       " <Element div at 0x117ef39a8>,\n",
+       " <Element script at 0x117ef39f8>]"
+      ]
+     },
+     "execution_count": 181,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "[l for l in tree.iterdescendants()]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 190,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'itemtype': 'http://schema.org/WebPage', 'itemscope': '', 'lang': 'en'}"
+      ]
+     },
+     "execution_count": 190,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "tree.attrib"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 185,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "my_link = tree.cssselect('a')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 188,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'class': 'gb1', 'href': 'http://maps.google.com/maps?hl=en&tab=wl'}"
+      ]
+     },
+     "execution_count": 188,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "my_link[1].attrib"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 191,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "sourcebit = urllib.request.urlopen(\"http://python.org\").read()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 196,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "treebit = html.document_fromstring(sourcebit)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 198,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "23"
+      ]
+     },
+     "execution_count": 198,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(treebit.cssselect('p'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 245,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\n",
+      "                        \n",
+      "                            Latest News\n",
+      "                            More\n",
+      "                            \n",
+      "                            \n",
+      "                                \n",
+      "                                \n",
+      "                                \n",
+      "2016-06-14\n",
+      " The first release candidate of Python 2.7.12, the next bugfix ...\n",
+      "                                \n",
+      "                                \n",
+      "2016-06-14\n",
+      " Python 3.6.0a2 has been released.  3.6.0a2 is the second of four planned alpha ...\n",
+      "                                \n",
+      "                                \n",
+      "2016-06-13\n",
+      " Python 3.5.2rc1 and Python 3.4.5rc1 are now available for download. ...\n",
+      "                                \n",
+      "                                \n",
+      "2016-05-17\n",
+      " Python 3.6.0a1 has been released.  3.6.0a1 is the first of four planned alpha ...\n",
+      "                                \n",
+      "                                \n",
+      "2015-12-07\n",
+      " Python 3.5.1 and Python 3.4.4rc1 are now available for download. ...\n",
+      "                                \n",
+      "                            \n",
+      "                        \n",
+      "\n",
+      "                        \n",
+      "                            Upcoming Events\n",
+      "                            More\n",
+      "                            \n",
+      "                            \n",
+      "                                \n",
+      "                                \n",
+      "                                \n",
+      "                                \n",
+      "2016-06-22\n",
+      " GeoPython 2016\n",
+      "                                \n",
+      "                                \n",
+      "                                \n",
+      "                                \n",
+      "2016-06-23\n",
+      " PyCon Singapore 2016\n",
+      "                                \n",
+      "                                \n",
+      "                                \n",
+      "                                \n",
+      "2016-07-06\n",
+      " Python Meeting Düsseldorf\n",
+      "                                \n",
+      "                                \n",
+      "                                \n",
+      "                                \n",
+      "2016-07-16\n",
+      " PyGotham 2016\n",
+      "                                \n",
+      "                                \n",
+      "                                \n",
+      "                                \n",
+      "2016-07-17\n",
+      " EuroPython 2016\n",
+      "                                \n",
+      "                                \n",
+      "                            \n",
+      "                        \n",
+      "\n",
+      "                            \n",
+      "\n",
+      "                            Success Stories\n",
+      "                            More\n",
+      "\n",
+      "                            \n",
+      "                            \n",
+      "\n",
+      "                            \n",
+      "                                ILM runs a batch processing environment capable of modeling, rendering and compositing tens of thousands of motion picture frames per day. Thousands of machines running Linux, IRIX, Compaq Tru64, OS X, Solaris, and Windows join together to provide a production pipeline used by ~800 users daily. Speed of development is key, and Python was a faster way to code (and re-code) the programs that control this production pipeline.\n",
+      "                            \n",
+      "\n",
+      "                            \n",
+      "                                \n",
+      "                                    \n",
+      "                                        \n",
+      "                                        Industrial Light & Magic Runs on Python by Tim Fortenberry\n",
+      "                                    \n",
+      "                                \n",
+      "                            \n",
+      "                            \n",
+      "                            \n",
+      "\n",
+      "                        \n",
+      "\n",
+      "                            Use Python for…\r\n",
+      "More\r\n",
+      "\r\n",
+      "\r\n",
+      "    Web Programming:\r\n",
+      "        Django, Pyramid, Bottle, Tornado, Flask, web2py\r\n",
+      "    GUI Development:\r\n",
+      "        wxPython, tkInter, PyGtk, PyGObject, PyQt\r\n",
+      "    Scientific and Numeric:\r\n",
+      "        \r\n",
+      "SciPy, Pandas, IPython\r\n",
+      "    Software Development:\r\n",
+      "        Buildbot, Trac, Roundup\r\n",
+      "    System Administration:\r\n",
+      "        Ansible, Salt, OpenStack\r\n",
+      "\r\n",
+      "\n",
+      "                        \n"
+     ]
+    }
+   ],
+   "source": [
+    "for div in treebit.cssselect('div.shrubbery'): ## To find div with class shrubbery\n",
+    "    print(div.text_content()) ## Text content of shrubbery"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 246,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[(<Element a at 0x117e6ee08>, 'href', '/about/apps', 0), (<Element a at 0x117f179a8>, 'href', 'http://www.djangoproject.com/', 0), (<Element a at 0x117f175e8>, 'href', 'http://www.pylonsproject.org/', 0), (<Element a at 0x117f22458>, 'href', 'http://bottlepy.org', 0), (<Element a at 0x117f22368>, 'href', 'http://tornadoweb.org', 0), (<Element a at 0x117f22638>, 'href', 'http://flask.pocoo.org/', 0), (<Element a at 0x117f22688>, 'href', 'http://www.web2py.com/', 0), (<Element a at 0x117f22728>, 'href', 'http://www.wxpython.org/', 0), (<Element a at 0x117f227c8>, 'href', 'http://wiki.python.org/moin/TkInter', 0), (<Element a at 0x117f228b8>, 'href', 'http://www.pygtk.org', 0), (<Element a at 0x117f22958>, 'href', 'https://wiki.gnome.org/Projects/PyGObject', 0), (<Element a at 0x117f229f8>, 'href', 'http://www.riverbankcomputing.co.uk/software/pyqt/intro', 0), (<Element a at 0x117f22a98>, 'href', 'http://www.scipy.org', 0), (<Element a at 0x117f22b38>, 'href', 'http://pandas.pydata.org/', 0), (<Element a at 0x117f22bd8>, 'href', 'http://ipython.org', 0), (<Element a at 0x117f22cc8>, 'href', 'http://buildbot.net/', 0), (<Element a at 0x117f22d68>, 'href', 'http://trac.edgewall.org/', 0), (<Element a at 0x117f22e08>, 'href', 'http://roundup.sourceforge.net/', 0), (<Element a at 0x117f22ef8>, 'href', 'http://www.ansible.com', 0), (<Element a at 0x117f41048>, 'href', 'http://www.saltstack.com', 0), (<Element a at 0x117f410e8>, 'href', 'https://www.openstack.org', 0)]\n"
+     ]
+    }
+   ],
+   "source": [
+    "print([l for l in div.iterlinks()])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 250,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[<Element code at 0x117f22368>,\n",
+       " <Element code at 0x117f227c8>,\n",
+       " <Element code at 0x117f228b8>,\n",
+       " <Element code at 0x117f22958>,\n",
+       " <Element code at 0x117f229f8>,\n",
+       " <Element code at 0x117f22a98>,\n",
+       " <Element code at 0x117f22b38>,\n",
+       " <Element code at 0x117f22c28>,\n",
+       " <Element code at 0x117f22bd8>,\n",
+       " <Element code at 0x117f22cc8>,\n",
+       " <Element code at 0x117f22d68>,\n",
+       " <Element code at 0x117f22e58>,\n",
+       " <Element code at 0x117f22e08>,\n",
+       " <Element code at 0x117f22f48>]"
+      ]
+     },
+     "execution_count": 250,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.cssselect('code')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 251,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[None,\n",
+       " None,\n",
+       " None,\n",
+       " '+',\n",
+       " '-',\n",
+       " '*',\n",
+       " '/',\n",
+       " '()',\n",
+       " None,\n",
+       " None,\n",
+       " 'if',\n",
+       " 'for',\n",
+       " 'while',\n",
+       " 'range']"
+      ]
+     },
+     "execution_count": 251,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "[t.text for t in treebit.cssselect('code')]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 252,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[<Element form at 0x117f22ef8>]"
+      ]
+     },
+     "execution_count": 252,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.cssselect('form')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 253,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['\\n                        ']"
+      ]
+     },
+     "execution_count": 253,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "[t.text for t in treebit.cssselect('form')]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 254,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[<Element form at 0x117f22ef8>]"
+      ]
+     },
+     "execution_count": 254,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.forms\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 258,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "\n",
+    "from lxml import etree\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 262,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[<Element p at 0x117f17ae8>,\n",
+       " <Element p at 0x117f17908>,\n",
+       " <Element p at 0x117f17548>,\n",
+       " <Element p at 0x117f17b38>,\n",
+       " <Element p at 0x117f17b88>,\n",
+       " <Element p at 0x117f17bd8>,\n",
+       " <Element p at 0x117f17c28>,\n",
+       " <Element p at 0x117f17c78>,\n",
+       " <Element p at 0x117f17cc8>,\n",
+       " <Element p at 0x117f17d18>,\n",
+       " <Element p at 0x117f17d68>,\n",
+       " <Element p at 0x117f17db8>,\n",
+       " <Element p at 0x117f17e08>,\n",
+       " <Element p at 0x117f17e58>,\n",
+       " <Element p at 0x117f17ea8>,\n",
+       " <Element p at 0x117f17ef8>,\n",
+       " <Element p at 0x117f17f48>,\n",
+       " <Element p at 0x117f17f98>,\n",
+       " <Element p at 0x117f22048>,\n",
+       " <Element p at 0x117f22098>,\n",
+       " <Element p at 0x117f220e8>,\n",
+       " <Element p at 0x117f22138>,\n",
+       " <Element p at 0x117f22188>]"
+      ]
+     },
+     "execution_count": 262,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.xpath('//p')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 268,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[<Element p at 0x117f17ae8>,\n",
+       " <Element p at 0x117f17908>,\n",
+       " <Element p at 0x117f17548>,\n",
+       " <Element p at 0x117f17b38>,\n",
+       " <Element p at 0x117f17b88>,\n",
+       " <Element p at 0x117f17bd8>,\n",
+       " <Element p at 0x117f17c28>,\n",
+       " <Element p at 0x117f17c78>,\n",
+       " <Element p at 0x117f17cc8>,\n",
+       " <Element p at 0x117f17d18>,\n",
+       " <Element p at 0x117f17d68>,\n",
+       " <Element p at 0x117f17db8>,\n",
+       " <Element p at 0x117f17e08>,\n",
+       " <Element p at 0x117f17e58>,\n",
+       " <Element p at 0x117f17ea8>,\n",
+       " <Element p at 0x117f17ef8>,\n",
+       " <Element p at 0x117f17f48>,\n",
+       " <Element p at 0x117f17f98>,\n",
+       " <Element p at 0x117f22048>,\n",
+       " <Element p at 0x117f22098>,\n",
+       " <Element p at 0x117f220e8>,\n",
+       " <Element p at 0x117f22138>,\n",
+       " <Element p at 0x117f22188>]"
+      ]
+     },
+     "execution_count": 268,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.xpath('//p')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 269,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[' While Javascript is not essential for this website, your interaction with the content will be limited. Please turn Javascript on for the full experience. ',\n",
+       " 'The core of extensible programming is defining functions. Python allows mandatory and optional arguments, keyword arguments, and even arbitrary argument lists. ',\n",
+       " 'Lists (known as arrays in other languages) are one of the compound data types that Python understands. Lists can be indexed, sliced and manipulated with other built-in functions. ',\n",
+       " 'Calculations are simple with Python, and expression syntax is straightforward: the operators ',\n",
+       " ', ',\n",
+       " ', ',\n",
+       " ' and ',\n",
+       " ' work as expected; parentheses ',\n",
+       " ' can be used for grouping. ',\n",
+       " '.',\n",
+       " 'Experienced programmers in any other language can pick up Python very quickly, and beginners find the clean syntax and indentation structure easy to learn. ',\n",
+       " ' with our Python\\xa03 overview.',\n",
+       " 'Python knows the usual control flow statements that other languages speak — ',\n",
+       " ', ',\n",
+       " ', ',\n",
+       " ' and ',\n",
+       " ' — with some of its own twists, of course. ',\n",
+       " 'Python is a programming language that lets you work quickly ',\n",
+       " 'and integrate systems more effectively. ',\n",
+       " \"Whether you're new to programming or an experienced developer, it's easy to learn and use Python.\",\n",
+       " 'Python source code and installers are available for download for all versions! Not sure which version to use? ',\n",
+       " '.',\n",
+       " 'Latest: ',\n",
+       " ' - ',\n",
+       " \"Documentation for Python's standard library, along with tutorials and guides, are available online.\",\n",
+       " \"Looking for work or have a Python related position that you're trying to hire for? Our \",\n",
+       " ' is the place to go.',\n",
+       " ' ',\n",
+       " 'The mission of the Python Software Foundation is to promote, protect, and advance the Python programming language, and to support and facilitate the growth of a diverse and international community of Python programmers. ',\n",
+       " ' ',\n",
+       " '\\r\\n    ',\n",
+       " '\\r\\n    ',\n",
+       " '\\r\\n']"
+      ]
+     },
+     "execution_count": 269,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.xpath('//p/text()')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 270,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['  ',\n",
+       " <!--<![endif]-->,\n",
+       " '\\n\\n',\n",
+       " <Element head at 0x117ef3ef8>,\n",
+       " '\\n\\n',\n",
+       " <Element body at 0x117e56db8>,\n",
+       " '\\n']"
+      ]
+     },
+     "execution_count": 270,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.xpath('node()')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 271,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[<Element head at 0x117ef3ef8>, <Element body at 0x117e56db8>]"
+      ]
+     },
+     "execution_count": 271,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.xpath('*')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 272,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[<Element div at 0x11797c3b8>,\n",
+       " <Element script at 0x117f17408>,\n",
+       " <Element script at 0x101c1fe58>,\n",
+       " <Element script at 0x101bc1cc8>,\n",
+       " <Element script at 0x101bc1f98>]"
+      ]
+     },
+     "execution_count": 272,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.xpath('body/*')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 273,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[<Element div at 0x11799f458>,\n",
+       " <Element div at 0x11799f728>,\n",
+       " <Element header at 0x117e884a8>,\n",
+       " <Element div at 0x1179c0d18>,\n",
+       " <Element footer at 0x117e60098>]"
+      ]
+     },
+     "execution_count": 273,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.xpath('body/div/*')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 274,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[<Element p at 0x117f17ae8>,\n",
+       " <Element nav at 0x1179e5db8>,\n",
+       " <Element div at 0x1179c0d68>]"
+      ]
+     },
+     "execution_count": 274,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.xpath('body/div/div/*')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 275,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[<Element strong at 0x101c27138>]"
+      ]
+     },
+     "execution_count": 275,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.xpath('body/div/div/p/*')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 284,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[<Element li at 0x1179e5868>,\n",
+       " <Element li at 0x117e6e4f8>,\n",
+       " <Element li at 0x117e6e868>,\n",
+       " <Element li at 0x117e6eae8>,\n",
+       " <Element li at 0x117e6e548>,\n",
+       " <Element li at 0x1179bd908>]"
+      ]
+     },
+     "execution_count": 284,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.xpath('body/div/div/nav/ul/*')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 286,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[<Element div at 0x11797c3b8>,\n",
+       " <Element div at 0x11799f458>,\n",
+       " <Element div at 0x11799f728>,\n",
+       " <Element div at 0x11799f638>,\n",
+       " <Element div at 0x11799f868>,\n",
+       " <Element div at 0x11799fb88>,\n",
+       " <Element div at 0x11799fcc8>,\n",
+       " <Element div at 0x11799f958>,\n",
+       " <Element div at 0x11799fe08>,\n",
+       " <Element div at 0x11799f408>,\n",
+       " <Element div at 0x11799f048>,\n",
+       " <Element div at 0x11799fea8>,\n",
+       " <Element div at 0x11799f908>,\n",
+       " <Element div at 0x11799f688>,\n",
+       " <Element div at 0x1179d6098>,\n",
+       " <Element div at 0x1179c0228>,\n",
+       " <Element div at 0x1179c02c8>,\n",
+       " <Element div at 0x1179c01d8>,\n",
+       " <Element div at 0x1179c05e8>,\n",
+       " <Element div at 0x1179c0728>,\n",
+       " <Element div at 0x1179c0778>,\n",
+       " <Element div at 0x1179c0a48>,\n",
+       " <Element div at 0x1179c0d18>,\n",
+       " <Element div at 0x1179c0d68>,\n",
+       " <Element div at 0x1179c0f98>,\n",
+       " <Element div at 0x1179bd1d8>,\n",
+       " <Element div at 0x1179bd278>,\n",
+       " <Element div at 0x1179bd228>,\n",
+       " <Element div at 0x1179bd3b8>,\n",
+       " <Element div at 0x1179bd2c8>,\n",
+       " <Element div at 0x1179bd4f8>,\n",
+       " <Element div at 0x1179bd778>,\n",
+       " <Element div at 0x1179bd9a8>,\n",
+       " <Element div at 0x1179bd688>,\n",
+       " <Element div at 0x1179bdbd8>,\n",
+       " <Element div at 0x1179bdcc8>,\n",
+       " <Element div at 0x1179bdc28>,\n",
+       " <Element div at 0x1179bdf98>,\n",
+       " <Element div at 0x1179bdef8>,\n",
+       " <Element div at 0x1179bd7c8>,\n",
+       " <Element div at 0x1179bdc78>,\n",
+       " <Element div at 0x117e11408>,\n",
+       " <Element div at 0x117e114a8>,\n",
+       " <Element div at 0x117e11908>,\n",
+       " <Element div at 0x117e119a8>,\n",
+       " <Element div at 0x117e11b38>,\n",
+       " <Element div at 0x117e11c78>,\n",
+       " <Element div at 0x117e11868>]"
+      ]
+     },
+     "execution_count": 286,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.xpath('//div')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 287,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['\\n\\n        ',\n",
+       " '\\n            ',\n",
+       " '\\n        ',\n",
+       " '\\n\\n        ',\n",
+       " '\\n\\n        ',\n",
+       " '\\n        ',\n",
+       " '\\n\\n            ',\n",
+       " '\\n                    ',\n",
+       " '\\n                ',\n",
+       " '\\n\\n        ',\n",
+       " '\\n\\n        ',\n",
+       " '\\n        ',\n",
+       " '\\n\\n                ',\n",
+       " '\\n\\n                ',\n",
+       " '\\n\\n                    \\n                    ',\n",
+       " '\\n                        ',\n",
+       " '\\n                    ',\n",
+       " '\\n                        ',\n",
+       " '\\n                    ',\n",
+       " '\\n                        ',\n",
+       " '\\n                    ',\n",
+       " '\\n\\n                ',\n",
+       " '\\n\\n                ',\n",
+       " '\\n\\n                ',\n",
+       " ' ',\n",
+       " '\\n                    \\n        ',\n",
+       " '\\n\\n            ',\n",
+       " '\\n\\n            ',\n",
+       " '\\r\\n',\n",
+       " '\\r\\n',\n",
+       " '\\r\\n',\n",
+       " '\\r\\n',\n",
+       " '\\r\\n                   ',\n",
+       " '\\r\\n',\n",
+       " '\\n        ',\n",
+       " '\\n\\n\\n                ',\n",
+       " '\\n\\n                \\n        ',\n",
+       " '\\n            ',\n",
+       " '\\n        ',\n",
+       " '\\n\\n\\n             ',\n",
+       " '\\n\\n        ',\n",
+       " '\\n            ',\n",
+       " '\\n            ',\n",
+       " '\\n\\n                ',\n",
+       " '\\n\\n                    ',\n",
+       " '\\n                        ',\n",
+       " '\\r\\n',\n",
+       " '\\r\\n',\n",
+       " '\\n                    ',\n",
+       " '\\n\\n                    ',\n",
+       " '\\n                        ',\n",
+       " '\\n',\n",
+       " '\\n',\n",
+       " '\\n                    ',\n",
+       " '\\n\\n                    ',\n",
+       " '\\n                        ',\n",
+       " '\\r\\n',\n",
+       " '\\r\\n',\n",
+       " '\\n                    ',\n",
+       " '\\n\\n                    ',\n",
+       " '\\n                        ',\n",
+       " '\\r\\n',\n",
+       " '\\r\\n',\n",
+       " '\\n                    ',\n",
+       " '\\n\\n                ',\n",
+       " '\\n\\n                    ',\n",
+       " '\\n                        \\n                        ',\n",
+       " '\\n                        \\n                            ',\n",
+       " '\\n                            ',\n",
+       " '\\n                            \\n                            ',\n",
+       " '\\n                        ',\n",
+       " '\\n\\n                    ',\n",
+       " '\\n\\n                    ',\n",
+       " '\\n                        \\n                        ',\n",
+       " '\\n                        \\n                            ',\n",
+       " '\\n                            ',\n",
+       " '\\n                            \\n                            ',\n",
+       " '\\n                        ',\n",
+       " '\\n\\n                    ',\n",
+       " '\\n\\n                ',\n",
+       " '\\n\\n                    ',\n",
+       " '\\n                        \\n\\n                        ',\n",
+       " '\\n                            \\n\\n                            ',\n",
+       " '\\n                            ',\n",
+       " '\\n\\n                            \\n                            ',\n",
+       " '\\n\\n                            ',\n",
+       " '\\n\\n                            ',\n",
+       " '\\n                            ',\n",
+       " '\\n                            \\n\\n                        ',\n",
+       " '\\n\\n                    ',\n",
+       " '\\n\\n                    ',\n",
+       " '\\n                        ',\n",
+       " '\\n                            ',\n",
+       " '\\r\\n',\n",
+       " '\\r\\n\\r\\n',\n",
+       " '\\r\\n\\n                        ',\n",
+       " '\\n                    ',\n",
+       " '\\n\\n                ',\n",
+       " '\\n\\n                    ',\n",
+       " '\\n\\n\\n                    \\n                    \\n                ',\n",
+       " '\\n\\n                    ',\n",
+       " '\\n                    \\n                    ',\n",
+       " '\\r\\n',\n",
+       " '\\r\\n',\n",
+       " '\\n                ',\n",
+       " '\\n\\n                \\n                \\n\\n                \\n                \\n\\n\\n            ',\n",
+       " '\\n        ',\n",
+       " '\\n\\n        ',\n",
+       " '\\n        ',\n",
+       " '\\n                ',\n",
+       " '\\n\\n                    \\n                    ',\n",
+       " '\\n\\n                    \\n\\n',\n",
+       " '\\n\\n\\n                    ',\n",
+       " '\\n                    \\n\\n                ',\n",
+       " '\\n            ',\n",
+       " '\\n                ',\n",
+       " '\\n                    \\n                    ',\n",
+       " '\\n\\n                    ',\n",
+       " '\\n                        ',\n",
+       " '\\n                    ',\n",
+       " '\\n\\n                ',\n",
+       " '\\n            ',\n",
+       " '\\n\\n    ']"
+      ]
+     },
+     "execution_count": 287,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.xpath('//div/text()')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 329,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['Skip to content',\n",
+       " '\\n                    ',\n",
+       " ' Close\\n                ',\n",
+       " 'Python',\n",
+       " 'PSF',\n",
+       " 'Docs',\n",
+       " 'PyPI',\n",
+       " 'Jobs',\n",
+       " 'Community',\n",
+       " '\\n                    ',\n",
+       " ' The Python Network\\n                ',\n",
+       " ' Menu',\n",
+       " 'Smaller',\n",
+       " 'Larger',\n",
+       " 'Reset',\n",
+       " 'Socialize',\n",
+       " 'Google+',\n",
+       " 'Facebook',\n",
+       " 'Twitter',\n",
+       " 'Chat on IRC',\n",
+       " 'Sign In',\n",
+       " 'Sign Up / Register',\n",
+       " 'Sign In',\n",
+       " 'About',\n",
+       " 'Applications',\n",
+       " 'Quotes',\n",
+       " 'Getting Started',\n",
+       " 'Help',\n",
+       " 'Python Brochure',\n",
+       " 'Downloads',\n",
+       " 'All releases',\n",
+       " 'Source code',\n",
+       " 'Windows',\n",
+       " 'Mac OS X',\n",
+       " 'Other Platforms',\n",
+       " 'License',\n",
+       " 'Alternative Implementations',\n",
+       " 'Documentation',\n",
+       " 'Docs',\n",
+       " 'Audio/Visual Talks',\n",
+       " \"Beginner's Guide\",\n",
+       " \"Developer's Guide\",\n",
+       " 'FAQ',\n",
+       " 'Non-English Docs',\n",
+       " 'PEP Index',\n",
+       " 'Python Books',\n",
+       " 'Community',\n",
+       " 'Diversity',\n",
+       " 'IRC',\n",
+       " 'Mailing Lists',\n",
+       " 'Python Conferences',\n",
+       " 'Special Interest Groups',\n",
+       " 'Python Wiki',\n",
+       " 'Python Logo',\n",
+       " 'Merchandise',\n",
+       " 'Community Awards',\n",
+       " 'Success Stories',\n",
+       " 'Arts',\n",
+       " 'Business',\n",
+       " 'Education',\n",
+       " 'Engineering',\n",
+       " 'Government',\n",
+       " 'Scientific',\n",
+       " 'Software Development',\n",
+       " 'News',\n",
+       " 'Python News',\n",
+       " 'Community News',\n",
+       " 'PSF News',\n",
+       " 'PyCon News',\n",
+       " 'Events',\n",
+       " 'Python Events',\n",
+       " 'User Group Events',\n",
+       " 'Python Events Archive',\n",
+       " 'User Group Events Archive',\n",
+       " 'Submit an Event',\n",
+       " '>_\\n                        ',\n",
+       " '\\n                    ',\n",
+       " 'More about defining functions in Python\\xa03',\n",
+       " 'More about lists in Python\\xa03',\n",
+       " 'More about simple math functions in Python\\xa03',\n",
+       " 'Whet your appetite',\n",
+       " 'More control flow tools in Python\\xa03',\n",
+       " 'Learn More',\n",
+       " 'Start with our Beginner’s Guide',\n",
+       " 'Check here',\n",
+       " 'Python 3.5.1',\n",
+       " 'Python 2.7.11',\n",
+       " 'docs.python.org',\n",
+       " 'jobs.python.org',\n",
+       " 'More',\n",
+       " 'The first release candidate of Python 2.7.12, the next bugfix ...',\n",
+       " 'Python 3.6.0a2\\xa0has been\\xa0released.\\xa0\\xa03.6.0a2 is the second of four planned alpha ...',\n",
+       " 'Python 3.5.2rc1 and Python 3.4.5rc1 are now available for download. ...',\n",
+       " 'Python 3.6.0a1\\xa0has been\\xa0released.\\xa0\\xa03.6.0a1 is the first of four planned alpha ...',\n",
+       " 'Python 3.5.1 and Python 3.4.4rc1 are now available for download. ...',\n",
+       " 'More',\n",
+       " 'GeoPython 2016',\n",
+       " 'PyCon Singapore 2016',\n",
+       " 'Python Meeting Düsseldorf',\n",
+       " 'PyGotham 2016',\n",
+       " 'EuroPython 2016',\n",
+       " 'More',\n",
+       " 'ILM runs a batch processing environment capable of modeling, rendering and compositing tens of thousands of motion picture frames per day. Thousands of machines running Linux, IRIX, Compaq Tru64, OS X, Solaris, and Windows join together to provide a production pipeline used by ~800 users daily. Speed of development is key, and Python was a faster way to code (and re-code) the programs that control this production pipeline.',\n",
+       " 'Industrial Light & Magic Runs on Python',\n",
+       " 'More',\n",
+       " 'Django',\n",
+       " 'Pyramid',\n",
+       " 'Bottle',\n",
+       " 'Tornado',\n",
+       " 'Flask',\n",
+       " 'web2py',\n",
+       " 'wxPython',\n",
+       " 'tkInter',\n",
+       " 'PyGtk',\n",
+       " 'PyGObject',\n",
+       " 'PyQt',\n",
+       " 'SciPy',\n",
+       " 'Pandas',\n",
+       " 'IPython',\n",
+       " 'Buildbot',\n",
+       " 'Trac',\n",
+       " 'Roundup',\n",
+       " 'Ansible',\n",
+       " 'Salt',\n",
+       " 'OpenStack',\n",
+       " 'Python Enhancement Proposals',\n",
+       " ' RSS',\n",
+       " 'Python Software Foundation',\n",
+       " 'Learn more',\n",
+       " 'Become a Member',\n",
+       " 'Donate to the PSF',\n",
+       " ' Back to Top',\n",
+       " 'About',\n",
+       " 'Applications',\n",
+       " 'Quotes',\n",
+       " 'Getting Started',\n",
+       " 'Help',\n",
+       " 'Python Brochure',\n",
+       " 'Downloads',\n",
+       " 'All releases',\n",
+       " 'Source code',\n",
+       " 'Windows',\n",
+       " 'Mac OS X',\n",
+       " 'Other Platforms',\n",
+       " 'License',\n",
+       " 'Alternative Implementations',\n",
+       " 'Documentation',\n",
+       " 'Docs',\n",
+       " 'Audio/Visual Talks',\n",
+       " \"Beginner's Guide\",\n",
+       " \"Developer's Guide\",\n",
+       " 'FAQ',\n",
+       " 'Non-English Docs',\n",
+       " 'PEP Index',\n",
+       " 'Python Books',\n",
+       " 'Community',\n",
+       " 'Diversity',\n",
+       " 'IRC',\n",
+       " 'Mailing Lists',\n",
+       " 'Python Conferences',\n",
+       " 'Special Interest Groups',\n",
+       " 'Python Wiki',\n",
+       " 'Python Logo',\n",
+       " 'Merchandise',\n",
+       " 'Community Awards',\n",
+       " 'Success Stories',\n",
+       " 'Arts',\n",
+       " 'Business',\n",
+       " 'Education',\n",
+       " 'Engineering',\n",
+       " 'Government',\n",
+       " 'Scientific',\n",
+       " 'Software Development',\n",
+       " 'News',\n",
+       " 'Python News',\n",
+       " 'Community News',\n",
+       " 'PSF News',\n",
+       " 'PyCon News',\n",
+       " 'Events',\n",
+       " 'Python Events',\n",
+       " 'User Group Events',\n",
+       " 'Python Events Archive',\n",
+       " 'User Group Events Archive',\n",
+       " 'Submit an Event',\n",
+       " 'Contributing',\n",
+       " \"Developer's Guide\",\n",
+       " 'Issue Tracker',\n",
+       " 'python-dev list',\n",
+       " 'Core Mentorship',\n",
+       " ' Back to Top',\n",
+       " 'Help & ',\n",
+       " ' Contact',\n",
+       " 'Diversity ',\n",
+       " 'Submit Website Bug',\n",
+       " 'Status ',\n",
+       " 'Python Software Foundation',\n",
+       " 'Legal Statements',\n",
+       " 'Privacy Policy']"
+      ]
+     },
+     "execution_count": 329,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.xpath('//a/text()') ## or just use //a for all the links."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 306,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[' While Javascript is not essential for this website, your interaction with the content will be limited. Please turn Javascript on for the full experience. ',\n",
+       " 'The core of extensible programming is defining functions. Python allows mandatory and optional arguments, keyword arguments, and even arbitrary argument lists. ',\n",
+       " 'Lists (known as arrays in other languages) are one of the compound data types that Python understands. Lists can be indexed, sliced and manipulated with other built-in functions. ',\n",
+       " 'Calculations are simple with Python, and expression syntax is straightforward: the operators ',\n",
+       " ', ',\n",
+       " ', ',\n",
+       " ' and ',\n",
+       " ' work as expected; parentheses ',\n",
+       " ' can be used for grouping. ',\n",
+       " '.',\n",
+       " 'Experienced programmers in any other language can pick up Python very quickly, and beginners find the clean syntax and indentation structure easy to learn. ',\n",
+       " ' with our Python\\xa03 overview.',\n",
+       " 'Python knows the usual control flow statements that other languages speak — ',\n",
+       " ', ',\n",
+       " ', ',\n",
+       " ' and ',\n",
+       " ' — with some of its own twists, of course. ',\n",
+       " 'Python is a programming language that lets you work quickly ',\n",
+       " 'and integrate systems more effectively. ',\n",
+       " \"Whether you're new to programming or an experienced developer, it's easy to learn and use Python.\",\n",
+       " 'Python source code and installers are available for download for all versions! Not sure which version to use? ',\n",
+       " '.',\n",
+       " 'Latest: ',\n",
+       " ' - ',\n",
+       " \"Documentation for Python's standard library, along with tutorials and guides, are available online.\",\n",
+       " \"Looking for work or have a Python related position that you're trying to hire for? Our \",\n",
+       " ' is the place to go.',\n",
+       " ' ',\n",
+       " 'The mission of the Python Software Foundation is to promote, protect, and advance the Python programming language, and to support and facilitate the growth of a diverse and international community of Python programmers. ',\n",
+       " ' ',\n",
+       " '\\r\\n    ',\n",
+       " '\\r\\n    ',\n",
+       " '\\r\\n']"
+      ]
+     },
+     "execution_count": 306,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.xpath('//p/text()')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 325,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['\\n        ',\n",
+       " '\\n    ',\n",
+       " '\\n        ',\n",
+       " '\\n    ',\n",
+       " '\\n        ',\n",
+       " '\\n    ',\n",
+       " '\\n        ',\n",
+       " '\\n    ',\n",
+       " '\\n        ',\n",
+       " '\\n    ',\n",
+       " '\\n        ',\n",
+       " '\\n    ',\n",
+       " '\\n                                ',\n",
+       " '\\n                                ',\n",
+       " '\\n                            ',\n",
+       " '\\n                                ',\n",
+       " '\\n                                ',\n",
+       " '\\n                            ',\n",
+       " '\\n                                \\n                                ',\n",
+       " '\\n                                ',\n",
+       " '\\n                                \\n                            ',\n",
+       " '\\n        ',\n",
+       " '\\n        \\n            \\n\\n',\n",
+       " '\\n\\n        \\n    ',\n",
+       " '\\n        ',\n",
+       " '\\n        \\n            \\n\\n',\n",
+       " '\\n\\n        \\n    ',\n",
+       " '\\n        ',\n",
+       " '\\n        \\n            \\n\\n',\n",
+       " '\\n\\n        \\n    ',\n",
+       " '\\n        ',\n",
+       " '\\n        \\n            \\n\\n',\n",
+       " '\\n\\n        \\n    ',\n",
+       " '\\n        ',\n",
+       " '\\n        \\n            \\n\\n',\n",
+       " '\\n\\n        \\n    ',\n",
+       " '\\n        ',\n",
+       " '\\n        \\n            \\n\\n',\n",
+       " '\\n\\n        \\n    ',\n",
+       " '\\n        ',\n",
+       " '\\n        \\n            \\n\\n',\n",
+       " '\\n\\n        \\n    ',\n",
+       " '\\n                    ',\n",
+       " '\\n                ',\n",
+       " '\\n                    ',\n",
+       " '\\n                    ',\n",
+       " '\\n                ',\n",
+       " '\\n                    ',\n",
+       " '\\n                    ',\n",
+       " '\\n                ',\n",
+       " '\\n                    ',\n",
+       " '\\n                    ',\n",
+       " '\\n                ',\n",
+       " '\\n                    ',\n",
+       " '\\n                    ',\n",
+       " '\\n                ',\n",
+       " '\\n                    ',\n",
+       " '\\n                    ',\n",
+       " '\\n                ',\n",
+       " '\\n',\n",
+       " '\\n ',\n",
+       " '\\n',\n",
+       " '\\n ',\n",
+       " '\\n',\n",
+       " '\\n ',\n",
+       " '\\n',\n",
+       " '\\n ',\n",
+       " '\\n',\n",
+       " '\\n ',\n",
+       " '\\n',\n",
+       " '\\n ',\n",
+       " '\\n',\n",
+       " '\\n ',\n",
+       " '\\n',\n",
+       " '\\n ',\n",
+       " '\\n',\n",
+       " '\\n ',\n",
+       " '\\n',\n",
+       " '\\n ',\n",
+       " ':\\r\\n        ',\n",
+       " ':\\r\\n        ',\n",
+       " ':\\r\\n        ',\n",
+       " ':\\r\\n        ',\n",
+       " ':\\r\\n        ',\n",
+       " '\\n        ',\n",
+       " '\\n        \\n            \\n\\n',\n",
+       " '\\n\\n        \\n    ',\n",
+       " '\\n        ',\n",
+       " '\\n        \\n            \\n\\n',\n",
+       " '\\n\\n        \\n    ',\n",
+       " '\\n        ',\n",
+       " '\\n        \\n            \\n\\n',\n",
+       " '\\n\\n        \\n    ',\n",
+       " '\\n        ',\n",
+       " '\\n        \\n            \\n\\n',\n",
+       " '\\n\\n        \\n    ',\n",
+       " '\\n        ',\n",
+       " '\\n        \\n            \\n\\n',\n",
+       " '\\n\\n        \\n    ',\n",
+       " '\\n        ',\n",
+       " '\\n        \\n            \\n\\n',\n",
+       " '\\n\\n        \\n    ',\n",
+       " '\\n        ',\n",
+       " '\\n        \\n            \\n\\n',\n",
+       " '\\n\\n        \\n    ',\n",
+       " '\\n        ',\n",
+       " '\\n        \\n            \\n\\n',\n",
+       " '\\n\\n        \\n    ',\n",
+       " '\\n                            ',\n",
+       " '\\n                        ']"
+      ]
+     },
+     "execution_count": 325,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.xpath('//li/text()') ## find the text of all the lists on the page."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 326,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['no-js',\n",
+       " 'en',\n",
+       " 'ltr',\n",
+       " 'utf-8',\n",
+       " 'X-UA-Compatible',\n",
+       " 'IE=edge',\n",
+       " 'prefetch',\n",
+       " '//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js',\n",
+       " 'application-name',\n",
+       " 'Python.org',\n",
+       " 'msapplication-tooltip',\n",
+       " 'The official home of the Python Programming Language',\n",
+       " 'apple-mobile-web-app-title',\n",
+       " 'Python.org',\n",
+       " 'apple-mobile-web-app-capable',\n",
+       " 'yes',\n",
+       " 'apple-mobile-web-app-status-bar-style',\n",
+       " 'black',\n",
+       " 'viewport',\n",
+       " 'width=device-width, initial-scale=1.0',\n",
+       " 'HandheldFriendly',\n",
+       " 'True',\n",
+       " 'format-detection',\n",
+       " 'telephone=no',\n",
+       " 'cleartype',\n",
+       " 'on',\n",
+       " 'imagetoolbar',\n",
+       " 'false',\n",
+       " '/static/js/libs/modernizr.js',\n",
+       " '/static/stylesheets/style.css',\n",
+       " 'stylesheet',\n",
+       " 'text/css',\n",
+       " 'default',\n",
+       " '/static/stylesheets/mq.css',\n",
+       " 'stylesheet',\n",
+       " 'text/css',\n",
+       " 'not print, braille, embossed, speech, tty',\n",
+       " 'icon',\n",
+       " 'image/x-icon',\n",
+       " '/static/favicon.ico',\n",
+       " 'apple-touch-icon-precomposed',\n",
+       " '144x144',\n",
+       " '/static/apple-touch-icon-144x144-precomposed.png',\n",
+       " 'apple-touch-icon-precomposed',\n",
+       " '114x114',\n",
+       " '/static/apple-touch-icon-114x114-precomposed.png',\n",
+       " 'apple-touch-icon-precomposed',\n",
+       " '72x72',\n",
+       " '/static/apple-touch-icon-72x72-precomposed.png',\n",
+       " 'apple-touch-icon-precomposed',\n",
+       " '/static/apple-touch-icon-precomposed.png',\n",
+       " 'apple-touch-icon',\n",
+       " '/static/apple-touch-icon-precomposed.png',\n",
+       " 'msapplication-TileImage',\n",
+       " '/static/metro-icon-144x144-precomposed.png',\n",
+       " 'msapplication-TileColor',\n",
+       " '#3673a5',\n",
+       " 'msapplication-navbutton-color',\n",
+       " '#3673a5',\n",
+       " 'description',\n",
+       " 'The official home of the Python Programming Language',\n",
+       " 'keywords',\n",
+       " 'Python programming language object oriented web free open source software license documentation download community',\n",
+       " 'og:type',\n",
+       " 'website',\n",
+       " 'og:site_name',\n",
+       " 'Python.org',\n",
+       " 'og:title',\n",
+       " 'Welcome to Python.org',\n",
+       " 'og:description',\n",
+       " 'The official home of the Python Programming Language',\n",
+       " 'og:image',\n",
+       " 'https://www.python.org/static/opengraph-icon-200x200.png',\n",
+       " 'og:image:secure_url',\n",
+       " 'https://www.python.org/static/opengraph-icon-200x200.png',\n",
+       " 'og:url',\n",
+       " 'https://www.python.org/',\n",
+       " 'author',\n",
+       " '/static/humans.txt',\n",
+       " 'application/ld+json',\n",
+       " 'text/javascript',\n",
+       " 'python home',\n",
+       " 'homepage',\n",
+       " 'touchnav-wrapper',\n",
+       " 'nojs',\n",
+       " 'do-not-print',\n",
+       " 'top',\n",
+       " 'top-bar do-not-print',\n",
+       " 'meta-navigation container',\n",
+       " 'navigation',\n",
+       " 'skip-link screen-reader-text',\n",
+       " '#content',\n",
+       " 'Skip to content',\n",
+       " 'close-python-network',\n",
+       " 'jump-link',\n",
+       " '#python-network',\n",
+       " 'true',\n",
+       " 'true',\n",
+       " 'icon-arrow-down',\n",
+       " 'menu',\n",
+       " 'tree',\n",
+       " 'python-meta current_item selectedcurrent_branch selected',\n",
+       " '/',\n",
+       " 'The Python Programming Language',\n",
+       " 'current_item selectedcurrent_branch selected',\n",
+       " 'psf-meta ',\n",
+       " '/psf-landing/',\n",
+       " 'The Python Software Foundation',\n",
+       " 'docs-meta ',\n",
+       " 'https://docs.python.org',\n",
+       " 'Python Documentation',\n",
+       " 'pypi-meta ',\n",
+       " 'https://pypi.python.org/',\n",
+       " 'Python Package Index',\n",
+       " 'jobs-meta ',\n",
+       " '/jobs/',\n",
+       " 'Python Job Board',\n",
+       " 'shop-meta ',\n",
+       " '/community/',\n",
+       " 'Python Community',\n",
+       " 'python-network',\n",
+       " 'jump-link',\n",
+       " '#top',\n",
+       " 'true',\n",
+       " 'true',\n",
+       " 'icon-arrow-up',\n",
+       " 'main-header',\n",
+       " 'banner',\n",
+       " 'container',\n",
+       " 'site-headline',\n",
+       " '/',\n",
+       " 'python-logo',\n",
+       " '/static/img/python-logo.png',\n",
+       " 'python™',\n",
+       " 'options-bar do-not-print',\n",
+       " 'site-map-link',\n",
+       " 'jump-to-menu',\n",
+       " '#site-map',\n",
+       " 'menu-icon',\n",
+       " 'search-the-site',\n",
+       " '/search/',\n",
+       " 'get',\n",
+       " 'Search Python.org',\n",
+       " 'true',\n",
+       " 'icon-search',\n",
+       " 'screen-reader-text',\n",
+       " 'id-search-field',\n",
+       " 'id-search-field',\n",
+       " 'q',\n",
+       " 'search',\n",
+       " 'textbox',\n",
+       " 'search-field',\n",
+       " 'Search',\n",
+       " '',\n",
+       " '1',\n",
+       " 'submit',\n",
+       " 'submit',\n",
+       " 'submit',\n",
+       " 'search-button',\n",
+       " 'Submit this Search',\n",
+       " '3',\n",
+       " 'breaker',\n",
+       " 'adjust-font-size',\n",
+       " 'true',\n",
+       " 'navigation menu',\n",
+       " 'Adjust Text Size on Page',\n",
+       " 'tier-1 last',\n",
+       " 'true',\n",
+       " '#',\n",
+       " 'action-trigger',\n",
+       " 'subnav menu',\n",
+       " 'tier-2 element-1',\n",
+       " 'treeitem',\n",
+       " 'text-shrink',\n",
+       " 'Make Text Smaller',\n",
+       " 'javascript:;',\n",
+       " 'tier-2 element-2',\n",
+       " 'treeitem',\n",
+       " 'text-grow',\n",
+       " 'Make Text Larger',\n",
+       " 'javascript:;',\n",
+       " 'tier-2 element-3',\n",
+       " 'treeitem',\n",
+       " 'text-reset',\n",
+       " 'Reset any font size changes I have made',\n",
+       " 'javascript:;',\n",
+       " 'winkwink-nudgenudge',\n",
+       " 'navigation menu',\n",
+       " 'Social Media Navigation',\n",
+       " 'tier-1 last',\n",
+       " 'true',\n",
+       " '#',\n",
+       " 'action-trigger',\n",
+       " 'subnav menu',\n",
+       " 'tier-2 element-1',\n",
+       " 'treeitem',\n",
+       " 'http://plus.google.com/+Python',\n",
+       " 'true',\n",
+       " 'icon-google-plus',\n",
+       " 'tier-2 element-2',\n",
+       " 'treeitem',\n",
+       " 'http://www.facebook.com/pythonlang?fref=ts',\n",
+       " 'true',\n",
+       " 'icon-facebook',\n",
+       " 'tier-2 element-3',\n",
+       " 'treeitem',\n",
+       " 'http://twitter.com/ThePSF',\n",
+       " 'true',\n",
+       " 'icon-twitter',\n",
+       " 'tier-2 element-4',\n",
+       " 'treeitem',\n",
+       " '/community/irc/',\n",
+       " 'true',\n",
+       " 'icon-freenode',\n",
+       " 'account-signin',\n",
+       " 'navigation menu',\n",
+       " 'Social Media Navigation',\n",
+       " 'tier-1 last',\n",
+       " 'true',\n",
+       " '/accounts/login/',\n",
+       " 'Sign Up or Sign In to Python.org',\n",
+       " 'subnav menu',\n",
+       " 'tier-2 element-1',\n",
+       " 'treeitem',\n",
+       " '/accounts/signup/',\n",
+       " 'tier-2 element-2',\n",
+       " 'treeitem',\n",
+       " '/accounts/login/',\n",
+       " 'mainnav',\n",
+       " 'python-navigation main-navigation do-not-print',\n",
+       " 'navigation',\n",
+       " 'navigation menu',\n",
+       " 'menubar',\n",
+       " 'Main Navigation',\n",
+       " 'about',\n",
+       " 'tier-1 element-1  ',\n",
+       " 'true',\n",
+       " '/about/',\n",
+       " '',\n",
+       " '',\n",
+       " 'subnav menu',\n",
+       " 'menu',\n",
+       " 'true',\n",
+       " 'tier-2 element-1',\n",
+       " 'treeitem',\n",
+       " '/about/apps/',\n",
+       " '',\n",
+       " 'tier-2 element-2',\n",
+       " 'treeitem',\n",
+       " '/about/quotes/',\n",
+       " '',\n",
+       " 'tier-2 element-3',\n",
+       " 'treeitem',\n",
+       " '/about/gettingstarted/',\n",
+       " '',\n",
+       " 'tier-2 element-4',\n",
+       " 'treeitem',\n",
+       " '/about/help/',\n",
+       " '',\n",
+       " 'tier-2 element-5',\n",
+       " 'treeitem',\n",
+       " 'http://brochure.getpython.info/',\n",
+       " '',\n",
+       " 'downloads',\n",
+       " 'tier-1 element-2  ',\n",
+       " 'true',\n",
+       " '/downloads/',\n",
+       " '',\n",
+       " '',\n",
+       " 'subnav menu',\n",
+       " 'menu',\n",
+       " 'true',\n",
+       " 'tier-2 element-1',\n",
+       " 'treeitem',\n",
+       " '/downloads/',\n",
+       " '',\n",
+       " 'tier-2 element-2',\n",
+       " 'treeitem',\n",
+       " '/downloads/source/',\n",
+       " '',\n",
+       " 'tier-2 element-3',\n",
+       " 'treeitem',\n",
+       " '/downloads/windows/',\n",
+       " '',\n",
+       " 'tier-2 element-4',\n",
+       " 'treeitem',\n",
+       " '/downloads/mac-osx/',\n",
+       " '',\n",
+       " 'tier-2 element-5',\n",
+       " 'treeitem',\n",
+       " '/download/other/',\n",
+       " '',\n",
+       " 'tier-2 element-6',\n",
+       " 'treeitem',\n",
+       " 'https://docs.python.org/3/license.html',\n",
+       " '',\n",
+       " 'tier-2 element-7',\n",
+       " 'treeitem',\n",
+       " '/download/alternatives',\n",
+       " '',\n",
+       " 'documentation',\n",
+       " 'tier-1 element-3  ',\n",
+       " 'true',\n",
+       " '/doc/',\n",
+       " '',\n",
+       " '',\n",
+       " 'subnav menu',\n",
+       " 'menu',\n",
+       " 'true',\n",
+       " 'tier-2 element-1',\n",
+       " 'treeitem',\n",
+       " '/doc/',\n",
+       " '',\n",
+       " 'tier-2 element-2',\n",
+       " 'treeitem',\n",
+       " '/doc/av',\n",
+       " '',\n",
+       " 'tier-2 element-3',\n",
+       " 'treeitem',\n",
+       " 'https://wiki.python.org/moin/BeginnersGuide',\n",
+       " '',\n",
+       " 'tier-2 element-4',\n",
+       " 'treeitem',\n",
+       " 'https://docs.python.org/devguide/',\n",
+       " '',\n",
+       " 'tier-2 element-5',\n",
+       " 'treeitem',\n",
+       " 'https://docs.python.org/faq/',\n",
+       " '',\n",
+       " 'tier-2 element-6',\n",
+       " 'treeitem',\n",
+       " 'http://wiki.python.org/moin/Languages',\n",
+       " '',\n",
+       " 'tier-2 element-7',\n",
+       " 'treeitem',\n",
+       " 'http://python.org/dev/peps/',\n",
+       " '',\n",
+       " 'tier-2 element-8',\n",
+       " 'treeitem',\n",
+       " 'https://wiki.python.org/moin/PythonBooks',\n",
+       " '',\n",
+       " 'community',\n",
+       " 'tier-1 element-4  ',\n",
+       " 'true',\n",
+       " '/community/',\n",
+       " '',\n",
+       " '',\n",
+       " 'subnav menu',\n",
+       " 'menu',\n",
+       " 'true',\n",
+       " 'tier-2 element-1',\n",
+       " 'treeitem',\n",
+       " '/community/diversity/',\n",
+       " '',\n",
+       " 'tier-2 element-2',\n",
+       " 'treeitem',\n",
+       " '/community/irc/',\n",
+       " '',\n",
+       " 'tier-2 element-3',\n",
+       " 'treeitem',\n",
+       " '/community/lists/',\n",
+       " '',\n",
+       " 'tier-2 element-4',\n",
+       " 'treeitem',\n",
+       " '/community/workshops/',\n",
+       " '',\n",
+       " 'tier-2 element-5',\n",
+       " 'treeitem',\n",
+       " '/community/sigs/',\n",
+       " '',\n",
+       " 'tier-2 element-6',\n",
+       " 'treeitem',\n",
+       " 'https://wiki.python.org/moin/',\n",
+       " '',\n",
+       " 'tier-2 element-7',\n",
+       " 'treeitem',\n",
+       " '/community/logos/',\n",
+       " '',\n",
+       " 'tier-2 element-8',\n",
+       " 'treeitem',\n",
+       " '/community/merchandise/',\n",
+       " '',\n",
+       " 'tier-2 element-9',\n",
+       " 'treeitem',\n",
+       " '/community/awards',\n",
+       " '',\n",
+       " 'success-stories',\n",
+       " 'tier-1 element-5  ',\n",
+       " 'true',\n",
+       " '/about/success/',\n",
+       " 'success-stories',\n",
+       " '',\n",
+       " 'subnav menu',\n",
+       " 'menu',\n",
+       " 'true',\n",
+       " 'tier-2 element-1',\n",
+       " 'treeitem',\n",
+       " '/about/success/#arts',\n",
+       " '',\n",
+       " 'tier-2 element-2',\n",
+       " 'treeitem',\n",
+       " '/about/success/#business',\n",
+       " '',\n",
+       " 'tier-2 element-3',\n",
+       " 'treeitem',\n",
+       " '/about/success/#education',\n",
+       " '',\n",
+       " 'tier-2 element-4',\n",
+       " 'treeitem',\n",
+       " '/about/success/#engineering',\n",
+       " '',\n",
+       " 'tier-2 element-5',\n",
+       " 'treeitem',\n",
+       " '/about/success/#government',\n",
+       " '',\n",
+       " 'tier-2 element-6',\n",
+       " 'treeitem',\n",
+       " '/about/success/#scientific',\n",
+       " '',\n",
+       " 'tier-2 element-7',\n",
+       " 'treeitem',\n",
+       " '/about/success/#software-development',\n",
+       " '',\n",
+       " 'news',\n",
+       " 'tier-1 element-6  ',\n",
+       " 'true',\n",
+       " '/blogs/',\n",
+       " 'News from around the Python world',\n",
+       " '',\n",
+       " 'subnav menu',\n",
+       " 'menu',\n",
+       " 'true',\n",
+       " 'tier-2 element-1',\n",
+       " 'treeitem',\n",
+       " '/blogs/',\n",
+       " 'Python Insider Blog Posts',\n",
+       " 'tier-2 element-2',\n",
+       " 'treeitem',\n",
+       " 'http://planetpython.org/',\n",
+       " 'Planet Python',\n",
+       " 'tier-2 element-3',\n",
+       " 'treeitem',\n",
+       " 'http://pyfound.blogspot.com/',\n",
+       " 'PSF Blog',\n",
+       " 'tier-2 element-4',\n",
+       " 'treeitem',\n",
+       " 'http://pycon.blogspot.com/',\n",
+       " 'PyCon Blog',\n",
+       " 'events',\n",
+       " 'tier-1 element-7  ',\n",
+       " 'true',\n",
+       " '/events/',\n",
+       " '',\n",
+       " '',\n",
+       " 'subnav menu',\n",
+       " 'menu',\n",
+       " 'true',\n",
+       " 'tier-2 element-1',\n",
+       " 'treeitem',\n",
+       " '/events/python-events',\n",
+       " '',\n",
+       " 'tier-2 element-2',\n",
+       " 'treeitem',\n",
+       " '/events/python-user-group/',\n",
+       " '',\n",
+       " 'tier-2 element-3',\n",
+       " 'treeitem',\n",
+       " '/events/python-events/past/',\n",
+       " '',\n",
+       " 'tier-2 element-4',\n",
+       " 'treeitem',\n",
+       " '/events/python-user-group/past/',\n",
+       " '',\n",
+       " 'tier-2 element-5',\n",
+       " 'treeitem',\n",
+       " 'https://wiki.python.org/moin/PythonEventsCalendar#Submitting_an_Event',\n",
+       " '',\n",
+       " 'header-banner ',\n",
+       " 'dive-into-python',\n",
+       " 'flex-slideshow slideshow',\n",
+       " 'launch-shell menu',\n",
+       " 'launch-shell',\n",
+       " 'button prompt',\n",
+       " 'start-shell',\n",
+       " '#dive-into-python',\n",
+       " '/shell/',\n",
+       " 'message',\n",
+       " 'slides menu',\n",
+       " 'slide-code',\n",
+       " 'comment',\n",
+       " 'output',\n",
+       " 'slide-copy',\n",
+       " '//docs.python.org/3/tutorial/controlflow.html#defining-functions',\n",
+       " 'slide-code',\n",
+       " 'comment',\n",
+       " 'output',\n",
+       " 'comment',\n",
+       " 'output',\n",
+       " 'slide-copy',\n",
+       " '//docs.python.org/3/tutorial/introduction.html#lists',\n",
+       " 'slide-code',\n",
+       " 'comment',\n",
+       " 'output',\n",
+       " 'output',\n",
+       " 'comment',\n",
+       " 'output',\n",
+       " 'comment',\n",
+       " 'output',\n",
+       " 'slide-copy',\n",
+       " 'http://docs.python.org/3/tutorial/introduction.html#using-python-as-a-calculator',\n",
+       " 'slide-code',\n",
+       " 'comment',\n",
+       " 'output',\n",
+       " 'comment',\n",
+       " 'output',\n",
+       " 'slide-copy',\n",
+       " '//docs.python.org/3/tutorial/',\n",
+       " 'slide-code',\n",
+       " '\\\\\"comment\\\\\"',\n",
+       " '\\\\\"output\\\\\"',\n",
+       " 'slide-copy',\n",
+       " '//docs.python.org/3/tutorial/controlflow.html',\n",
+       " 'introduction',\n",
+       " 'breaker',\n",
+       " 'readmore',\n",
+       " '/doc/',\n",
+       " 'content',\n",
+       " 'content-wrapper',\n",
+       " 'container',\n",
+       " 'main-content ',\n",
+       " 'main',\n",
+       " 'row',\n",
+       " 'small-widget get-started-widget',\n",
+       " 'widget-title',\n",
+       " 'true',\n",
+       " 'icon-get-started',\n",
+       " '/about/gettingstarted/',\n",
+       " 'small-widget download-widget',\n",
+       " 'widget-title',\n",
+       " 'true',\n",
+       " 'icon-download',\n",
+       " 'https://wiki.python.org/moin/Python2orPython3',\n",
+       " '/downloads/release/python-351/',\n",
+       " '/downloads/release/python-2711/',\n",
+       " 'small-widget documentation-widget',\n",
+       " 'widget-title',\n",
+       " 'true',\n",
+       " 'icon-documentation',\n",
+       " 'https://docs.python.org',\n",
+       " 'small-widget jobs-widget last',\n",
+       " 'widget-title',\n",
+       " 'true',\n",
+       " 'icon-jobs',\n",
+       " '//jobs.python.org',\n",
+       " 'list-widgets row',\n",
+       " 'medium-widget blog-widget',\n",
+       " 'shrubbery',\n",
+       " 'widget-title',\n",
+       " 'true',\n",
+       " 'icon-news',\n",
+       " 'give-me-more',\n",
+       " 'http://blog.python.org',\n",
+       " 'More News',\n",
+       " 'menu',\n",
+       " '2016-06-14T06:06:00.000001+00:00',\n",
+       " 'say-no-more',\n",
+       " 'http://feedproxy.google.com/~r/PythonInsider/~3/yaupkpp9kLc/python-2712-release-candidate-available.html',\n",
+       " '2016-06-14T04:06:00.000001+00:00',\n",
+       " 'say-no-more',\n",
+       " 'http://feedproxy.google.com/~r/PythonInsider/~3/nE_a_L4mHfk/python-360-alpha-2-preview-release-is.html',\n",
+       " '2016-06-13T03:18:00+00:00',\n",
+       " 'say-no-more',\n",
+       " 'http://feedproxy.google.com/~r/PythonInsider/~3/sDMmUdw_7RU/python-352rc1-and-python-345rc1-are-now.html',\n",
+       " '2016-05-17T22:57:00.000001+00:00',\n",
+       " 'say-no-more',\n",
+       " 'http://feedproxy.google.com/~r/PythonInsider/~3/cxjZlK_6b9Y/python-360-alpha-1-preview-release-is.html',\n",
+       " '2015-12-07T05:51:00+00:00',\n",
+       " 'say-no-more',\n",
+       " 'http://feedproxy.google.com/~r/PythonInsider/~3/F9ApGB7BGB4/python-351-and-python-344rc1-are-now.html',\n",
+       " 'medium-widget event-widget last',\n",
+       " 'shrubbery',\n",
+       " 'widget-title',\n",
+       " 'true',\n",
+       " 'icon-calendar',\n",
+       " 'give-me-more',\n",
+       " '/events/calendars/',\n",
+       " 'More Events',\n",
+       " 'menu',\n",
+       " '2016-06-22T00:00:00+00:00',\n",
+       " 'say-no-more',\n",
+       " '/events/python-events/376/',\n",
+       " '2016-06-23T00:00:00+00:00',\n",
+       " 'say-no-more',\n",
+       " '/events/python-events/395/',\n",
+       " '2016-07-06T16:00:00+00:00',\n",
+       " 'say-no-more',\n",
+       " '/events/python-user-group/403/',\n",
+       " '2016-07-16T00:00:00+00:00',\n",
+       " 'say-no-more',\n",
+       " '/events/python-events/426/',\n",
+       " '2016-07-17T00:00:00+00:00',\n",
+       " 'say-no-more',\n",
+       " '/events/python-events/370/',\n",
+       " 'row',\n",
+       " 'medium-widget success-stories-widget',\n",
+       " 'shrubbery',\n",
+       " 'widget-title',\n",
+       " 'true',\n",
+       " 'icon-success-stories',\n",
+       " 'give-me-more',\n",
+       " '/success-stories/',\n",
+       " 'More Success Stories',\n",
+       " 'success-story-item',\n",
+       " '0',\n",
+       " 'success-story-2',\n",
+       " 'display: none;',\n",
+       " '/success-stories/industrial-light-magic-runs-python/',\n",
+       " '0',\n",
+       " '0',\n",
+       " '0',\n",
+       " '100%',\n",
+       " 'quote-from',\n",
+       " '/success-stories/industrial-light-magic-runs-python/',\n",
+       " 'medium-widget applications-widget last',\n",
+       " 'shrubbery',\n",
+       " 'widget-title',\n",
+       " 'true',\n",
+       " 'icon-python',\n",
+       " 'give-me-more',\n",
+       " '/about/apps',\n",
+       " 'More Applications',\n",
+       " 'menu',\n",
+       " 'tag-wrapper',\n",
+       " 'tag',\n",
+       " 'http://www.djangoproject.com/',\n",
+       " 'tag',\n",
+       " 'http://www.pylonsproject.org/',\n",
+       " 'tag',\n",
+       " 'http://bottlepy.org',\n",
+       " 'tag',\n",
+       " 'http://tornadoweb.org',\n",
+       " 'http://flask.pocoo.org/',\n",
+       " 'tag',\n",
+       " 'tag',\n",
+       " 'http://www.web2py.com/',\n",
+       " 'tag-wrapper',\n",
+       " 'tag',\n",
+       " 'http://www.wxpython.org/',\n",
+       " 'tag',\n",
+       " 'http://wiki.python.org/moin/TkInter',\n",
+       " 'tag',\n",
+       " 'http://www.pygtk.org',\n",
+       " 'tag',\n",
+       " 'https://wiki.gnome.org/Projects/PyGObject',\n",
+       " 'tag',\n",
+       " 'http://www.riverbankcomputing.co.uk/software/pyqt/intro',\n",
+       " 'tag-wrapper',\n",
+       " 'tag',\n",
+       " 'http://www.scipy.org',\n",
+       " 'tag',\n",
+       " 'http://pandas.pydata.org/',\n",
+       " 'http://ipython.org',\n",
+       " 'tag',\n",
+       " 'tag-wrapper',\n",
+       " 'tag',\n",
+       " 'http://buildbot.net/',\n",
+       " 'tag',\n",
+       " 'http://trac.edgewall.org/',\n",
+       " 'tag',\n",
+       " 'http://roundup.sourceforge.net/',\n",
+       " 'tag-wrapper',\n",
+       " 'tag',\n",
+       " 'http://www.ansible.com',\n",
+       " 'tag',\n",
+       " 'http://www.saltstack.com',\n",
+       " 'tag',\n",
+       " 'https://www.openstack.org',\n",
+       " 'pep-widget',\n",
+       " 'widget-title',\n",
+       " 'prompt',\n",
+       " '/dev/peps/',\n",
+       " 'say-no-more',\n",
+       " 'say-no-more',\n",
+       " 'true',\n",
+       " 'rss-link',\n",
+       " '/dev/peps/peps.rss',\n",
+       " 'icon-feed',\n",
+       " 'psf-widget',\n",
+       " 'python-logo',\n",
+       " 'widget-title',\n",
+       " 'prompt',\n",
+       " '/psf/',\n",
+       " 'readmore',\n",
+       " '/psf/',\n",
+       " 'click-these',\n",
+       " 'button',\n",
+       " '/users/membership/',\n",
+       " 'button',\n",
+       " '/psf/donations/',\n",
+       " 'site-map',\n",
+       " 'main-footer',\n",
+       " 'contentinfo',\n",
+       " 'main-footer-links',\n",
+       " 'container',\n",
+       " 'back-to-top-1',\n",
+       " 'jump-link',\n",
+       " '#python-network',\n",
+       " 'true',\n",
+       " 'icon-arrow-up',\n",
+       " 'sitemap navigation menu do-not-print',\n",
+       " 'tree',\n",
+       " 'container',\n",
+       " 'tier-1 element-1',\n",
+       " '/about/',\n",
+       " 'subnav menu',\n",
+       " 'tier-2 element-1',\n",
+       " 'treeitem',\n",
+       " '/about/apps/',\n",
+       " '',\n",
+       " 'tier-2 element-2',\n",
+       " 'treeitem',\n",
+       " '/about/quotes/',\n",
+       " '',\n",
+       " 'tier-2 element-3',\n",
+       " 'treeitem',\n",
+       " '/about/gettingstarted/',\n",
+       " '',\n",
+       " 'tier-2 element-4',\n",
+       " 'treeitem',\n",
+       " '/about/help/',\n",
+       " '',\n",
+       " 'tier-2 element-5',\n",
+       " 'treeitem',\n",
+       " 'http://brochure.getpython.info/',\n",
+       " '',\n",
+       " 'tier-1 element-2',\n",
+       " '/downloads/',\n",
+       " 'subnav menu',\n",
+       " 'tier-2 element-1',\n",
+       " 'treeitem',\n",
+       " '/downloads/',\n",
+       " '',\n",
+       " 'tier-2 element-2',\n",
+       " 'treeitem',\n",
+       " '/downloads/source/',\n",
+       " '',\n",
+       " 'tier-2 element-3',\n",
+       " 'treeitem',\n",
+       " '/downloads/windows/',\n",
+       " '',\n",
+       " 'tier-2 element-4',\n",
+       " 'treeitem',\n",
+       " '/downloads/mac-osx/',\n",
+       " '',\n",
+       " 'tier-2 element-5',\n",
+       " 'treeitem',\n",
+       " '/download/other/',\n",
+       " '',\n",
+       " 'tier-2 element-6',\n",
+       " 'treeitem',\n",
+       " 'https://docs.python.org/3/license.html',\n",
+       " '',\n",
+       " 'tier-2 element-7',\n",
+       " 'treeitem',\n",
+       " '/download/alternatives',\n",
+       " '',\n",
+       " 'tier-1 element-3',\n",
+       " '/doc/',\n",
+       " 'subnav menu',\n",
+       " 'tier-2 element-1',\n",
+       " 'treeitem',\n",
+       " '/doc/',\n",
+       " '',\n",
+       " 'tier-2 element-2',\n",
+       " 'treeitem',\n",
+       " '/doc/av',\n",
+       " '',\n",
+       " 'tier-2 element-3',\n",
+       " 'treeitem',\n",
+       " 'https://wiki.python.org/moin/BeginnersGuide',\n",
+       " '',\n",
+       " 'tier-2 element-4',\n",
+       " 'treeitem',\n",
+       " 'https://docs.python.org/devguide/',\n",
+       " '',\n",
+       " 'tier-2 element-5',\n",
+       " 'treeitem',\n",
+       " 'https://docs.python.org/faq/',\n",
+       " '',\n",
+       " 'tier-2 element-6',\n",
+       " 'treeitem',\n",
+       " 'http://wiki.python.org/moin/Languages',\n",
+       " '',\n",
+       " 'tier-2 element-7',\n",
+       " 'treeitem',\n",
+       " 'http://python.org/dev/peps/',\n",
+       " '',\n",
+       " 'tier-2 element-8',\n",
+       " 'treeitem',\n",
+       " 'https://wiki.python.org/moin/PythonBooks',\n",
+       " '',\n",
+       " 'tier-1 element-4',\n",
+       " '/community/',\n",
+       " 'subnav menu',\n",
+       " 'tier-2 element-1',\n",
+       " 'treeitem',\n",
+       " '/community/diversity/',\n",
+       " '',\n",
+       " 'tier-2 element-2',\n",
+       " 'treeitem',\n",
+       " '/community/irc/',\n",
+       " '',\n",
+       " 'tier-2 element-3',\n",
+       " 'treeitem',\n",
+       " '/community/lists/',\n",
+       " '',\n",
+       " 'tier-2 element-4',\n",
+       " 'treeitem',\n",
+       " '/community/workshops/',\n",
+       " '',\n",
+       " 'tier-2 element-5',\n",
+       " 'treeitem',\n",
+       " '/community/sigs/',\n",
+       " '',\n",
+       " 'tier-2 element-6',\n",
+       " 'treeitem',\n",
+       " 'https://wiki.python.org/moin/',\n",
+       " '',\n",
+       " 'tier-2 element-7',\n",
+       " 'treeitem',\n",
+       " '/community/logos/',\n",
+       " '',\n",
+       " 'tier-2 element-8',\n",
+       " 'treeitem',\n",
+       " '/community/merchandise/',\n",
+       " '',\n",
+       " 'tier-2 element-9',\n",
+       " 'treeitem',\n",
+       " '/community/awards',\n",
+       " '',\n",
+       " 'tier-1 element-5',\n",
+       " '/about/success/',\n",
+       " 'success-stories',\n",
+       " 'subnav menu',\n",
+       " 'tier-2 element-1',\n",
+       " 'treeitem',\n",
+       " '/about/success/#arts',\n",
+       " '',\n",
+       " 'tier-2 element-2',\n",
+       " 'treeitem',\n",
+       " '/about/success/#business',\n",
+       " '',\n",
+       " 'tier-2 element-3',\n",
+       " 'treeitem',\n",
+       " '/about/success/#education',\n",
+       " '',\n",
+       " 'tier-2 element-4',\n",
+       " 'treeitem',\n",
+       " '/about/success/#engineering',\n",
+       " '',\n",
+       " 'tier-2 element-5',\n",
+       " 'treeitem',\n",
+       " '/about/success/#government',\n",
+       " '',\n",
+       " 'tier-2 element-6',\n",
+       " 'treeitem',\n",
+       " '/about/success/#scientific',\n",
+       " '',\n",
+       " 'tier-2 element-7',\n",
+       " 'treeitem',\n",
+       " '/about/success/#software-development',\n",
+       " '',\n",
+       " 'tier-1 element-6',\n",
+       " '/blogs/',\n",
+       " 'News from around the Python world',\n",
+       " 'subnav menu',\n",
+       " 'tier-2 element-1',\n",
+       " 'treeitem',\n",
+       " '/blogs/',\n",
+       " 'Python Insider Blog Posts',\n",
+       " 'tier-2 element-2',\n",
+       " 'treeitem',\n",
+       " 'http://planetpython.org/',\n",
+       " 'Planet Python',\n",
+       " 'tier-2 element-3',\n",
+       " 'treeitem',\n",
+       " 'http://pyfound.blogspot.com/',\n",
+       " 'PSF Blog',\n",
+       " 'tier-2 element-4',\n",
+       " 'treeitem',\n",
+       " 'http://pycon.blogspot.com/',\n",
+       " 'PyCon Blog',\n",
+       " 'tier-1 element-7',\n",
+       " '/events/',\n",
+       " 'subnav menu',\n",
+       " 'tier-2 element-1',\n",
+       " 'treeitem',\n",
+       " '/events/python-events',\n",
+       " '',\n",
+       " 'tier-2 element-2',\n",
+       " 'treeitem',\n",
+       " '/events/python-user-group/',\n",
+       " '',\n",
+       " 'tier-2 element-3',\n",
+       " 'treeitem',\n",
+       " '/events/python-events/past/',\n",
+       " '',\n",
+       " 'tier-2 element-4',\n",
+       " 'treeitem',\n",
+       " '/events/python-user-group/past/',\n",
+       " '',\n",
+       " 'tier-2 element-5',\n",
+       " 'treeitem',\n",
+       " 'https://wiki.python.org/moin/PythonEventsCalendar#Submitting_an_Event',\n",
+       " '',\n",
+       " 'tier-1 element-8',\n",
+       " '/dev/',\n",
+       " 'subnav menu',\n",
+       " 'tier-2 element-1',\n",
+       " 'treeitem',\n",
+       " 'http://docs.python.org/devguide/',\n",
+       " '',\n",
+       " 'tier-2 element-2',\n",
+       " 'treeitem',\n",
+       " 'http://bugs.python.org/',\n",
+       " '',\n",
+       " 'tier-2 element-3',\n",
+       " 'treeitem',\n",
+       " 'https://mail.python.org/mailman/listinfo/python-dev',\n",
+       " '',\n",
+       " 'tier-2 element-4',\n",
+       " 'treeitem',\n",
+       " 'http://pythonmentors.com/',\n",
+       " '',\n",
+       " 'back-to-top-2',\n",
+       " 'jump-link',\n",
+       " '#python-network',\n",
+       " 'true',\n",
+       " 'icon-arrow-up',\n",
+       " 'site-base',\n",
+       " 'container',\n",
+       " 'footer-links navigation menu do-not-print',\n",
+       " 'tree',\n",
+       " 'tier-1 element-1',\n",
+       " '/about/help/',\n",
+       " 'say-no-more',\n",
+       " 'tier-1 element-2',\n",
+       " '/community/diversity/',\n",
+       " 'say-no-more',\n",
+       " 'tier-1 element-3',\n",
+       " 'https://github.com/python/pythondotorg/issues',\n",
+       " 'tier-1 element-4',\n",
+       " 'https://status.python.org/',\n",
+       " 'python-status-indicator-default',\n",
+       " 'python-status-indicator',\n",
+       " 'copyright',\n",
+       " 'pre',\n",
+       " 'pre',\n",
+       " '/psf-landing/',\n",
+       " 'pre',\n",
+       " '/about/legal/',\n",
+       " 'pre',\n",
+       " '/privacy/',\n",
+       " '//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js',\n",
+       " '/static/js/libs/masonry.pkgd.min.js',\n",
+       " 'text/javascript',\n",
+       " '/static/js/main-min.js',\n",
+       " 'utf-8']"
+      ]
+     },
+     "execution_count": 326,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.xpath('//@*') ## Find all the attributes on the page."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 330,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[]"
+      ]
+     },
+     "execution_count": 330,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    " treebit.xpath('//style')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 331,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[]"
+      ]
+     },
+     "execution_count": 331,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.xpath('//head/style') ## To find the style sheet statement."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 338,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[]"
+      ]
+     },
+     "execution_count": 338,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.xpath('//div[@class=\"contentblock\"]') ## pretty similar to cssselect."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 342,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[]"
+      ]
+     },
+     "execution_count": 342,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.xpath('//div[contains(@class, \"contentblock\")]')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 345,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "False"
+      ]
+     },
+     "execution_count": 345,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "treebit.xpath('//div/@class=\"contentblock\"') ## Really efficient for scraping a shit load of content."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "from selenium import webdriver"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "anaconda-cloud": {},
+  "kernelspec": {
+   "display_name": "Python [Root]",
+   "language": "python",
+   "name": "Python [Root]"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.5.2"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 0
+}
